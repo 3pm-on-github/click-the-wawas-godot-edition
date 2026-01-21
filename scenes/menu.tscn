@@ -1,16 +1,20 @@
-[gd_scene load_steps=14 format=3 uid="uid://d35l55tdxc08w"]
+[gd_scene load_steps=18 format=3 uid="uid://d35l55tdxc08w"]
 
 [ext_resource type="Script" uid="uid://da5ag1b1cg5x2" path="res://scripts/menu.gd" id="1_vjb58"]
 [ext_resource type="AudioStream" uid="uid://brle1wunjefkc" path="res://audio/menumusic.mp3" id="3_mhnvy"]
 [ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="4_mhnvy"]
 [ext_resource type="Texture2D" uid="uid://bov6ouvvtjej4" path="res://images/playbtn.png" id="5_v86rl"]
+[ext_resource type="Texture2D" uid="uid://bjjy7xr1c7gm5" path="res://images/solobtn.png" id="6_6cdou"]
 [ext_resource type="Texture2D" uid="uid://cnypgpvqvv7nq" path="res://images/configbtn.png" id="6_13sgg"]
 [ext_resource type="Texture2D" uid="uid://bxk8unpkdpr54" path="res://images/playbtnhover.png" id="6_i6lef"]
 [ext_resource type="Texture2D" uid="uid://ggm56dfn8wap" path="res://images/editorbtn.png" id="6_mj5lg"]
 [ext_resource type="Texture2D" uid="uid://cxs5grngryo8c" path="res://images/exitbtn.png" id="7_i6lef"]
+[ext_resource type="Texture2D" uid="uid://ccf81qf7e2bp8" path="res://images/solobtnhover.png" id="7_i42df"]
 [ext_resource type="Texture2D" uid="uid://3k1chuyvv83f" path="res://images/editorbtnhover.png" id="7_ufwb2"]
+[ext_resource type="Texture2D" uid="uid://h8brla501qer" path="res://images/multibtn.png" id="8_7jp70"]
 [ext_resource type="Texture2D" uid="uid://c0ovbqg0x3sxh" path="res://images/exitbtnhover.png" id="9_70i5f"]
 [ext_resource type="AudioStream" uid="uid://dym6wdf1fq22e" path="res://audio/hovering.wav" id="9_i6lef"]
+[ext_resource type="Texture2D" uid="uid://d1pndllsek5dr" path="res://images/multibtnhover.png" id="9_mxgkd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4ytvr"]
 font_size = 115
@@ -61,6 +65,24 @@ offset_top = 14.0
 offset_right = 900.0
 offset_bottom = 233.0
 
+[node name="multibtn" type="TextureButton" parent="."]
+offset_left = 47.0
+offset_top = 443.0
+offset_right = 229.0
+offset_bottom = 501.0
+scale = Vector2(2, 2)
+texture_normal = ExtResource("8_7jp70")
+texture_hover = ExtResource("9_mxgkd")
+
+[node name="solobtn" type="TextureButton" parent="."]
+offset_left = 47.0
+offset_top = 443.0
+offset_right = 229.0
+offset_bottom = 501.0
+scale = Vector2(2, 2)
+texture_normal = ExtResource("6_6cdou")
+texture_hover = ExtResource("7_i42df")
+
 [node name="playbtn" type="TextureButton" parent="."]
 offset_left = 47.0
 offset_top = 443.0
@@ -69,6 +91,12 @@ offset_bottom = 501.0
 scale = Vector2(2, 2)
 texture_normal = ExtResource("5_v86rl")
 texture_hover = ExtResource("6_i6lef")
+
+[node name="wawahitbox" type="TextureButton" parent="."]
+offset_left = 998.00006
+offset_top = 43.00003
+offset_right = 1896.0
+offset_bottom = 1017.0
 
 [node name="editorbtn" type="TextureButton" parent="."]
 offset_left = 47.0
@@ -106,17 +134,13 @@ offset_right = 1920.0
 offset_bottom = 1080.0
 color = Color(0, 0, 0, 1)
 
-[node name="wawahitbox" type="TextureButton" parent="."]
-offset_left = 998.00006
-offset_top = 43.00003
-offset_right = 1896.0
-offset_bottom = 1017.0
-
 [connection signal="pressed" from="title/hitbox" to="." method="_on_hitbox_pressed"]
+[connection signal="pressed" from="multibtn" to="." method="_on_multibtn_pressed"]
+[connection signal="pressed" from="solobtn" to="." method="_on_solobtn_pressed"]
 [connection signal="mouse_entered" from="playbtn" to="." method="_on_playbtn_mouse_entered"]
 [connection signal="pressed" from="playbtn" to="." method="_on_playbtn_pressed"]
+[connection signal="pressed" from="wawahitbox" to="." method="_on_wawahitbox_pressed"]
 [connection signal="mouse_entered" from="editorbtn" to="." method="_on_editorbtn_mouse_entered"]
 [connection signal="pressed" from="editorbtn" to="." method="_on_editorbtn_pressed"]
 [connection signal="mouse_entered" from="exitbtn" to="." method="_on_exitbtn_mouse_entered"]
 [connection signal="pressed" from="exitbtn" to="." method="_on_exitbtn_pressed"]
-[connection signal="pressed" from="wawahitbox" to="." method="_on_wawahitbox_pressed"]

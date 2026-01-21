@@ -8,6 +8,9 @@ func _ready() -> void:
 	$Wawa.position = Vector2(2542, 525)
 	$title.position = Vector2(-940.0, 64.0)
 	$playbtn.position = Vector2(-403, 443)
+	$solobtn.visible = false
+	$multibtn.visible = false
+	$multibtn.position = Vector2(431.0, 443.0)
 	$editorbtn.position = Vector2(-403, 582)
 	$configbtn.position = Vector2(-403, 724)
 	$exitbtn.position = Vector2(-403, 867)
@@ -33,6 +36,7 @@ func _ready() -> void:
 	await get_tree().create_timer(0.25).timeout
 	var tween4 = get_tree().create_tween()
 	tween4.tween_property($exitbtn, "position", Vector2(47, 867), 0.5).set_trans(Tween.TRANS_SINE)
+	$solobtn.visible = true
 	while true:
 		if movement:
 			for i in range(40):
@@ -48,15 +52,27 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	$Wawa.rotation_degrees += 1
 
+var playtoggled = false
 func _on_playbtn_pressed() -> void:
-	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
-	$AudioStreamPlayer2D2.play()
-	$blackbg.visible = true
-	for i in range(80):
-		$AudioStreamPlayer2D.volume_db -= 1
-		$blackbg.modulate.a += 0.0125
-		await get_tree().create_timer(0.0125).timeout
-	get_tree().change_scene_to_file("res://scenes/stages/stage1.tscn")
+	playtoggled = not playtoggled
+	if playtoggled:
+		$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
+		$AudioStreamPlayer2D2.play()
+		var tween = get_tree().create_tween()
+		tween.tween_property($solobtn, "position", Vector2(431.0, 443.0), 0.25).set_trans(Tween.TRANS_SINE)
+		await get_tree().create_timer(0.25).timeout
+		$multibtn.visible = true
+		var tween2 = get_tree().create_tween()
+		tween2.tween_property($multibtn, "position", Vector2(431.0, 582.0), 0.25).set_trans(Tween.TRANS_SINE)
+	else:
+		$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
+		$AudioStreamPlayer2D2.play()
+		var tween = get_tree().create_tween()
+		tween.tween_property($multibtn, "position", Vector2(431.0, 443.0), 0.25).set_trans(Tween.TRANS_SINE)
+		await get_tree().create_timer(0.25).timeout
+		$multibtn.visible = false
+		var tween2 = get_tree().create_tween()
+		tween2.tween_property($solobtn, "position", Vector2(47, 443), 0.25).set_trans(Tween.TRANS_SINE)
 
 func _on_playbtn_mouse_entered() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/hovering.wav")
@@ -121,3 +137,17 @@ func _on_hitbox_pressed() -> void:
 		$blackbg.modulate.a += 0.0125
 		await get_tree().create_timer(0.0125).timeout
 	get_tree().change_scene_to_file("res://scenes/gallery.tscn")
+
+
+func _on_multibtn_pressed() -> void:
+	pass # the api isnt real yet so i cant make it rn
+
+func _on_solobtn_pressed() -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
+	$AudioStreamPlayer2D2.play()
+	$blackbg.visible = true
+	for i in range(80):
+		$AudioStreamPlayer2D.volume_db -= 1
+		$blackbg.modulate.a += 0.0125
+		await get_tree().create_timer(0.0125).timeout
+	get_tree().change_scene_to_file("res://scenes/stages/stage1.tscn")
