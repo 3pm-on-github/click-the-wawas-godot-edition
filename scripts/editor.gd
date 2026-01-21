@@ -8,19 +8,26 @@ var elements = []
 func int_to_11bit(value: int) -> String:
 	return String.num_uint64(value & 0x7FF, 2).pad_zeros(11)
 
-func save_to_file(content):
-	var file = FileAccess.open("user://savedata.dat", FileAccess.WRITE)
+func save_to_file(content, path):
+	var file = FileAccess.open(path, FileAccess.WRITE)
 	file.store_buffer(content)
 	file.close()
 
-func load_from_file():
-	var content = FileAccess.get_file_as_bytes("user://savedata.dat")
+func load_from_file(path):
+	var content = FileAccess.get_file_as_bytes(path)
 	return content
 
 func load_and_returnb64(path):
 	var content = FileAccess.get_file_as_bytes(path)
 	return Marshalls.raw_to_base64(content)
-	
+
+func returnsha256(data: PackedByteArray) -> String:
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update(data)
+	var hash: PackedByteArray = ctx.finish()
+	return hash.hex_encode()
+
 func _write_u32(dst: PackedByteArray, v: int) -> void:
 	dst.append((v >> 24) & 0xFF)
 	dst.append((v >> 16) & 0xFF)
@@ -78,10 +85,10 @@ func save():
 		out.append(y & 0xFF)
 		out.append(flags)
 
-	save_to_file(out)
+	save_to_file(out, "user://customstages/"+returnsha256(out)+".ctw")
 
 func loadcontent() -> Dictionary:
-	var src: PackedByteArray = load_from_file()
+	var src: PackedByteArray = load_from_file("user://customstages/savedata.dat") # will be changed soon
 
 	var result := {
 		"counter": 30,
@@ -144,6 +151,7 @@ var loadedcontent = loadcontent()
 var wawacount = 0
 var mrfreshcount = 0
 func _ready() -> void:
+	DirAccess.make_dir_absolute("user://customstages")
 	$countereditpopup.visible = false
 	$editpopuppopup.visible = false
 	$blackbg.visible = true
