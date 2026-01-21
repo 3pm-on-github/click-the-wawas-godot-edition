@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://g3knss64rd3n"
+path="res://.godot/imported/disentanglement dynamo.mp3-655fd2a59d8103d90b936d59e6063b2b.mp3str"
+
+[deps]
+
+source_file="res://audio/randomaudio/disentanglement dynamo.mp3"
+dest_files=["res://.godot/imported/disentanglement dynamo.mp3-655fd2a59d8103d90b936d59e6063b2b.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

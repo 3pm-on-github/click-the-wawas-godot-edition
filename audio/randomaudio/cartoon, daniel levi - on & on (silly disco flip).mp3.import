@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://du7doto5ef6wq"
+path="res://.godot/imported/cartoon, daniel levi - on & on (silly disco flip).mp3-54b26e81f2aac8967183d39945e55209.mp3str"
+
+[deps]
+
+source_file="res://audio/randomaudio/cartoon, daniel levi - on & on (silly disco flip).mp3"
+dest_files=["res://.godot/imported/cartoon, daniel levi - on & on (silly disco flip).mp3-54b26e81f2aac8967183d39945e55209.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

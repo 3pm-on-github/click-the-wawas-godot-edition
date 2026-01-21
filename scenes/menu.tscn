@@ -1,0 +1,122 @@
+[gd_scene load_steps=14 format=3 uid="uid://d35l55tdxc08w"]
+
+[ext_resource type="Script" uid="uid://da5ag1b1cg5x2" path="res://scripts/menu.gd" id="1_vjb58"]
+[ext_resource type="AudioStream" uid="uid://brle1wunjefkc" path="res://audio/menumusic.mp3" id="3_mhnvy"]
+[ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="4_mhnvy"]
+[ext_resource type="Texture2D" uid="uid://bov6ouvvtjej4" path="res://images/playbtn.png" id="5_v86rl"]
+[ext_resource type="Texture2D" uid="uid://cnypgpvqvv7nq" path="res://images/configbtn.png" id="6_13sgg"]
+[ext_resource type="Texture2D" uid="uid://bxk8unpkdpr54" path="res://images/playbtnhover.png" id="6_i6lef"]
+[ext_resource type="Texture2D" uid="uid://ggm56dfn8wap" path="res://images/editorbtn.png" id="6_mj5lg"]
+[ext_resource type="Texture2D" uid="uid://cxs5grngryo8c" path="res://images/exitbtn.png" id="7_i6lef"]
+[ext_resource type="Texture2D" uid="uid://3k1chuyvv83f" path="res://images/editorbtnhover.png" id="7_ufwb2"]
+[ext_resource type="Texture2D" uid="uid://c0ovbqg0x3sxh" path="res://images/exitbtnhover.png" id="9_70i5f"]
+[ext_resource type="AudioStream" uid="uid://dym6wdf1fq22e" path="res://audio/hovering.wav" id="9_i6lef"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_4ytvr"]
+font_size = 115
+outline_size = 30
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_g3eks"]
+font_size = 68
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
+
+[node name="menu" type="Node2D"]
+script = ExtResource("1_vjb58")
+
+[node name="bg" type="ColorRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_mhnvy")
+
+[node name="Wawa" type="Sprite2D" parent="."]
+position = Vector2(1513, 525)
+scale = Vector2(5, 5)
+texture = ExtResource("4_mhnvy")
+
+[node name="title" type="Label" parent="."]
+offset_left = 64.0
+offset_top = 64.0
+offset_right = 961.0
+offset_bottom = 221.0
+text = "click the wawas:"
+label_settings = SubResource("LabelSettings_4ytvr")
+
+[node name="subtitle" type="Label" parent="title"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 129.0
+offset_right = 438.0
+offset_bottom = 222.0
+text = "godot edition"
+label_settings = SubResource("LabelSettings_g3eks")
+
+[node name="hitbox" type="TextureButton" parent="title"]
+layout_mode = 0
+offset_left = -10.0
+offset_top = 14.0
+offset_right = 900.0
+offset_bottom = 233.0
+
+[node name="playbtn" type="TextureButton" parent="."]
+offset_left = 47.0
+offset_top = 443.0
+offset_right = 229.0
+offset_bottom = 501.0
+scale = Vector2(2, 2)
+texture_normal = ExtResource("5_v86rl")
+texture_hover = ExtResource("6_i6lef")
+
+[node name="editorbtn" type="TextureButton" parent="."]
+offset_left = 47.0
+offset_top = 582.0
+offset_right = 229.0
+offset_bottom = 640.0
+scale = Vector2(2, 2)
+texture_normal = ExtResource("6_mj5lg")
+texture_hover = ExtResource("7_ufwb2")
+
+[node name="configbtn" type="TextureButton" parent="."]
+offset_left = 47.0
+offset_top = 724.0
+offset_right = 229.0
+offset_bottom = 782.0
+scale = Vector2(2, 2)
+texture_normal = ExtResource("6_13sgg")
+
+[node name="exitbtn" type="TextureButton" parent="."]
+offset_left = 47.0
+offset_top = 867.0
+offset_right = 229.0
+offset_bottom = 925.0
+scale = Vector2(2, 2)
+texture_normal = ExtResource("7_i6lef")
+texture_hover = ExtResource("9_70i5f")
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_i6lef")
+volume_db = 6.0
+
+[node name="blackbg" type="ColorRect" parent="."]
+visible = false
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 1)
+
+[node name="wawahitbox" type="TextureButton" parent="."]
+offset_left = 998.00006
+offset_top = 43.00003
+offset_right = 1896.0
+offset_bottom = 1017.0
+
+[connection signal="pressed" from="title/hitbox" to="." method="_on_hitbox_pressed"]
+[connection signal="mouse_entered" from="playbtn" to="." method="_on_playbtn_mouse_entered"]
+[connection signal="pressed" from="playbtn" to="." method="_on_playbtn_pressed"]
+[connection signal="mouse_entered" from="editorbtn" to="." method="_on_editorbtn_mouse_entered"]
+[connection signal="pressed" from="editorbtn" to="." method="_on_editorbtn_pressed"]
+[connection signal="mouse_entered" from="exitbtn" to="." method="_on_exitbtn_mouse_entered"]
+[connection signal="pressed" from="exitbtn" to="." method="_on_exitbtn_pressed"]
+[connection signal="pressed" from="wawahitbox" to="." method="_on_wawahitbox_pressed"]

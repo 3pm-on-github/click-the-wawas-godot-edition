@@ -1,0 +1,393 @@
+[gd_scene load_steps=15 format=3 uid="uid://dwnaww5p7nnv0"]
+
+[ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="1_b1cmn"]
+[ext_resource type="Script" uid="uid://dyfm5u32b7deo" path="res://scripts/editor.gd" id="1_pxqd5"]
+[ext_resource type="AudioStream" uid="uid://m4ppqceas50u" path="res://audio/ow.wav" id="3_ba0ut"]
+[ext_resource type="Script" uid="uid://bnd1ndohdblr" path="res://scripts/wawa3.gd" id="3_eqbpn"]
+[ext_resource type="AudioStream" uid="uid://bpmtvkh5ytsmm" path="res://audio/clickfast.ogg" id="3_q68jb"]
+[ext_resource type="AudioStream" uid="uid://b07b7j8apjn1x" path="res://audio/editorost.mp3" id="3_xg7d5"]
+[ext_resource type="Texture2D" uid="uid://hld6g60e7go7" path="res://images/mrfresh.png" id="4_5lcyj"]
+[ext_resource type="Script" uid="uid://6lxjykal84cp" path="res://scripts/mrfresh.gd" id="5_5tm2q"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_pxqd5"]
+font_size = 64
+
+[sub_resource type="LabelSettings" id="LabelSettings_xg7d5"]
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_q68jb"]
+font_size = 128
+
+[sub_resource type="LabelSettings" id="LabelSettings_5lcyj"]
+font_size = 48
+
+[sub_resource type="LabelSettings" id="LabelSettings_ba0ut"]
+font_size = 34
+
+[sub_resource type="LabelSettings" id="LabelSettings_eqbpn"]
+font_size = 38
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
+[node name="editor" type="Node2D"]
+script = ExtResource("1_pxqd5")
+
+[node name="bg" type="ColorRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="counter" type="ColorRect" parent="."]
+offset_left = 892.0
+offset_right = 1032.0
+offset_bottom = 80.0
+color = Color(0.23392546, 0.23392546, 0.23392543, 1)
+
+[node name="Label" type="Label" parent="counter"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = -6.0
+offset_right = 108.0
+offset_bottom = 82.0
+text = "30"
+label_settings = SubResource("LabelSettings_pxqd5")
+
+[node name="counterhitbox" type="TextureButton" parent="."]
+offset_left = 892.0
+offset_right = 1032.0
+offset_bottom = 80.0
+
+[node name="selectorbg" type="ColorRect" parent="."]
+offset_top = 946.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.46618086, 0.4661808, 0.4661808, 1)
+
+[node name="settingspopup" type="ColorRect" parent="."]
+visible = false
+offset_left = 646.0
+offset_top = 327.0
+offset_right = 1286.0
+offset_bottom = 738.0
+color = Color(0.34407577, 0.34407574, 0.34407574, 1)
+
+[node name="donebtn" type="Button" parent="settingspopup"]
+layout_mode = 0
+offset_left = 272.0
+offset_top = 334.0
+offset_right = 321.0
+offset_bottom = 365.0
+scale = Vector2(2, 2)
+text = "Done"
+
+[node name="EditPopup" type="Button" parent="settingspopup"]
+layout_mode = 0
+offset_left = 235.0
+offset_top = 16.0
+offset_right = 327.0
+offset_bottom = 49.333374
+scale = Vector2(2, 2)
+text = "Edit Popup"
+
+[node name="DeleteStage" type="Button" parent="settingspopup"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 16.0
+offset_right = 119.0
+offset_bottom = 49.333496
+scale = Vector2(2, 2)
+text = "Delete Stage"
+
+[node name="EditMusic" type="Button" parent="settingspopup"]
+layout_mode = 0
+offset_left = 431.0
+offset_top = 16.0
+offset_right = 523.0
+offset_bottom = 49.333374
+scale = Vector2(2, 2)
+text = "Edit Music"
+
+[node name="countereditpopup" type="ColorRect" parent="."]
+visible = false
+offset_left = 651.0
+offset_top = 324.0
+offset_right = 1291.0
+offset_bottom = 735.0
+color = Color(0.34407577, 0.34407574, 0.34407574, 1)
+
+[node name="Label" type="Label" parent="countereditpopup"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 11.0
+offset_right = 530.0
+offset_bottom = 56.0
+text = "Select the countdown's time."
+label_settings = SubResource("LabelSettings_xg7d5")
+
+[node name="digit1" type="Label" parent="countereditpopup"]
+layout_mode = 0
+offset_left = 231.0
+offset_top = 112.0
+offset_right = 304.0
+offset_bottom = 287.0
+text = "3"
+label_settings = SubResource("LabelSettings_q68jb")
+
+[node name="addbtn" type="Button" parent="countereditpopup/digit1"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 4.0
+offset_right = 56.0
+offset_bottom = 35.0
+text = "ADD"
+
+[node name="subbtn" type="Button" parent="countereditpopup/digit1"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 148.0
+offset_right = 55.0
+offset_bottom = 179.0
+text = "SUB"
+
+[node name="digit2" type="Label" parent="countereditpopup"]
+layout_mode = 0
+offset_left = 307.0
+offset_top = 112.0
+offset_right = 380.0
+offset_bottom = 287.0
+text = "0"
+label_settings = SubResource("LabelSettings_q68jb")
+
+[node name="addbtn" type="Button" parent="countereditpopup/digit2"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 4.0
+offset_right = 59.0
+offset_bottom = 35.0
+text = "ADD"
+
+[node name="subbtn" type="Button" parent="countereditpopup/digit2"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 148.0
+offset_right = 58.0
+offset_bottom = 179.0
+text = "SUB"
+
+[node name="donebtn" type="Button" parent="countereditpopup"]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 301.0
+offset_right = 281.0
+offset_bottom = 332.0
+scale = Vector2(3, 3)
+text = "Done"
+
+[node name="editpopuppopup" type="ColorRect" parent="."]
+visible = false
+offset_left = 646.0
+offset_top = 327.0
+offset_right = 1286.0
+offset_bottom = 738.0
+color = Color(0.34407577, 0.34407574, 0.34407574, 1)
+
+[node name="Label" type="Label" parent="editpopuppopup"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 11.0
+offset_right = 583.0
+offset_bottom = 78.0
+text = "Enter the popup's text."
+label_settings = SubResource("LabelSettings_5lcyj")
+
+[node name="donebtn" type="Button" parent="editpopuppopup"]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 301.0
+offset_right = 281.0
+offset_bottom = 332.0
+scale = Vector2(3, 3)
+text = "Done"
+
+[node name="LineEdit" type="LineEdit" parent="editpopuppopup"]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 159.0
+offset_right = 510.0
+offset_bottom = 206.0
+placeholder_text = "Your Popup Text Here"
+max_length = 40
+
+[node name="editmusicpopup" type="ColorRect" parent="."]
+visible = false
+offset_left = 646.0
+offset_top = 327.0
+offset_right = 1286.0
+offset_bottom = 738.0
+color = Color(0.34407577, 0.34407574, 0.34407574, 1)
+
+[node name="Label" type="Label" parent="editmusicpopup"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 11.0
+offset_right = 583.0
+offset_bottom = 78.0
+text = "Enter the music path.
+(has to end in .mp3)"
+label_settings = SubResource("LabelSettings_ba0ut")
+horizontal_alignment = 1
+
+[node name="donebtn" type="Button" parent="editmusicpopup"]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 301.0
+offset_right = 281.0
+offset_bottom = 332.0
+scale = Vector2(3, 3)
+text = "Done"
+
+[node name="LineEdit" type="LineEdit" parent="editmusicpopup"]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 159.0
+offset_right = 510.0
+offset_bottom = 206.0
+placeholder_text = "Your Music Path Here"
+max_length = 40
+
+[node name="playbtn" type="Button" parent="editmusicpopup"]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 214.0
+offset_right = 304.0
+offset_bottom = 245.0
+scale = Vector2(2, 2)
+text = "Play"
+
+[node name="wawa" type="TextureButton" parent="."]
+visible = false
+offset_left = 933.0
+offset_top = 409.0
+offset_right = 1076.0
+offset_bottom = 601.0
+scale = Vector2(0.6, 0.5)
+texture_normal = ExtResource("1_b1cmn")
+script = ExtResource("3_eqbpn")
+
+[node name="mrfresh" type="TextureButton" parent="."]
+visible = false
+offset_left = 933.0
+offset_top = 409.0
+offset_right = 1076.0
+offset_bottom = 601.0
+scale = Vector2(0.25, 0.25)
+texture_normal = ExtResource("4_5lcyj")
+script = ExtResource("5_5tm2q")
+
+[node name="WawaSelector" type="Button" parent="."]
+offset_left = 17.0
+offset_top = 963.0
+offset_right = 217.0
+offset_bottom = 1163.0
+scale = Vector2(0.5, 0.5)
+icon = ExtResource("1_b1cmn")
+icon_alignment = 1
+
+[node name="counter" type="Label" parent="WawaSelector"]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 148.0
+offset_right = 198.0
+offset_bottom = 201.0
+text = "0"
+label_settings = SubResource("LabelSettings_eqbpn")
+horizontal_alignment = 1
+
+[node name="MrFreshSelector" type="Button" parent="."]
+offset_left = 126.0
+offset_top = 963.0
+offset_right = 554.0
+offset_bottom = 1391.0
+scale = Vector2(0.234, 0.234)
+icon = ExtResource("4_5lcyj")
+icon_alignment = 1
+
+[node name="counter" type="Label" parent="MrFreshSelector"]
+layout_mode = 0
+offset_left = 269.23077
+offset_top = 316.23923
+offset_right = 347.23077
+offset_bottom = 369.23923
+scale = Vector2(2.25, 2.25)
+text = "0"
+label_settings = SubResource("LabelSettings_eqbpn")
+horizontal_alignment = 1
+
+[node name="tryitbtn" type="Button" parent="."]
+offset_left = 1748.0
+offset_top = 963.00006
+offset_right = 1800.0
+offset_bottom = 996.33344
+scale = Vector2(3, 3)
+text = "Try It"
+
+[node name="BackToMenu" type="Button" parent="."]
+offset_left = 1388.0
+offset_top = 963.00006
+offset_right = 1505.0
+offset_bottom = 996.33356
+scale = Vector2(3, 3)
+text = "Back To Menu"
+
+[node name="Settings" type="Button" parent="."]
+offset_left = 1158.0
+offset_top = 963.00006
+offset_right = 1232.0
+offset_bottom = 996.33356
+scale = Vector2(3, 3)
+text = "Settings
+"
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_xg7d5")
+autoplay = true
+parameters/looping = false
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(933, 409)
+scale = Vector2(0.6, 0.5)
+stream = ExtResource("3_q68jb")
+volume_db = 3.0
+
+[node name="AudioStreamPlayer2D3" type="AudioStreamPlayer2D" parent="."]
+position = Vector2(933, 409)
+scale = Vector2(0.6, 0.5)
+stream = ExtResource("3_ba0ut")
+volume_db = -3.0
+
+[node name="blackbg" type="ColorRect" parent="."]
+visible = false
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 1)
+
+[connection signal="gui_input" from="bg" to="." method="_on_bg_gui_input"]
+[connection signal="pressed" from="counterhitbox" to="." method="_on_counterhitbox_pressed"]
+[connection signal="pressed" from="settingspopup/donebtn" to="." method="_on_settings_donebtn_pressed"]
+[connection signal="pressed" from="settingspopup/EditPopup" to="." method="_on_edit_popup_pressed"]
+[connection signal="pressed" from="settingspopup/DeleteStage" to="." method="_on_delete_stage_pressed"]
+[connection signal="pressed" from="settingspopup/EditMusic" to="." method="_on_edit_music_pressed"]
+[connection signal="pressed" from="countereditpopup/digit1/addbtn" to="." method="_on_digit1_addbtn_pressed"]
+[connection signal="pressed" from="countereditpopup/digit1/subbtn" to="." method="_on_digit1_subbtn_pressed"]
+[connection signal="pressed" from="countereditpopup/digit2/addbtn" to="." method="_on_digit2_addbtn_pressed"]
+[connection signal="pressed" from="countereditpopup/digit2/subbtn" to="." method="_on_digit2_subbtn_pressed"]
+[connection signal="pressed" from="countereditpopup/donebtn" to="." method="_on_donebtn_pressed"]
+[connection signal="pressed" from="editpopuppopup/donebtn" to="." method="_on_editpopup_donebtn_pressed"]
+[connection signal="pressed" from="editmusicpopup/donebtn" to="." method="_on_editmusic_donebtn_pressed"]
+[connection signal="pressed" from="editmusicpopup/playbtn" to="." method="_on_editmusic_playbtn_pressed"]
+[connection signal="gui_input" from="wawa" to="wawa" method="_on_gui_input"]
+[connection signal="gui_input" from="mrfresh" to="mrfresh" method="_on_gui_input"]
+[connection signal="focus_entered" from="WawaSelector" to="." method="_on_wawa_selector_focus_entered"]
+[connection signal="pressed" from="MrFreshSelector" to="." method="_on_mr_fresh_selector_pressed"]
+[connection signal="pressed" from="tryitbtn" to="." method="_on_tryitbtn_pressed"]
+[connection signal="pressed" from="BackToMenu" to="." method="_on_back_to_menu_pressed"]
+[connection signal="pressed" from="Settings" to="." method="_on_settings_pressed"]

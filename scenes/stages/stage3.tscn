@@ -1,0 +1,125 @@
+[gd_scene load_steps=18 format=3 uid="uid://vmp4f1addo5c"]
+
+[ext_resource type="Script" uid="uid://brrr2pvtpdww6" path="res://scripts/stages/stage3.gd" id="1_qr580"]
+[ext_resource type="AudioStream" uid="uid://bqla2getn3bk3" path="res://audio/gamemusic.wav" id="1_s34vi"]
+[ext_resource type="Texture2D" uid="uid://cxqrc5jt66qqs" path="res://images/bg/bgstage3.png" id="2_4yq72"]
+[ext_resource type="AudioStream" uid="uid://byj8nhv4k7b2c" path="res://audio/newpopup.wav" id="2_qr580"]
+[ext_resource type="Texture2D" uid="uid://c08tc6ikdlck1" path="res://images/popups/popup3.png" id="3_s34vi"]
+[ext_resource type="Texture2D" uid="uid://duf7bmma6ycgr" path="res://images/ok.png" id="4_kuwvy"]
+[ext_resource type="Texture2D" uid="uid://p3p8ml4vybls" path="res://images/okhover.png" id="5_3x2jc"]
+[ext_resource type="Texture2D" uid="uid://huiu3qhvd5p6" path="res://images/shooter.png" id="5_kuwvy"]
+[ext_resource type="Texture2D" uid="uid://bj4i60rdihw3" path="res://images/bullet.png" id="5_n1l8g"]
+[ext_resource type="Script" uid="uid://c7qppcw4alk7w" path="res://scripts/bullet.gd" id="6_8xppl"]
+[ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="6_ogllf"]
+[ext_resource type="Script" uid="uid://b6wgqxjlck7n8" path="res://scripts/wawa4.gd" id="7_n1l8g"]
+[ext_resource type="AudioStream" uid="uid://biqku6qgg2mf3" path="res://audio/bullet.wav" id="7_t0bj4"]
+[ext_resource type="AudioStream" uid="uid://m4ppqceas50u" path="res://audio/ow.wav" id="10_nbw8p"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_65m3o"]
+font_size = 64
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ogllf"]
+size = Vector2(15.999989, 18.000011)
+
+[sub_resource type="LabelSettings" id="LabelSettings_kuwvy"]
+font_size = 128
+
+[node name="stage3" type="Node2D"]
+script = ExtResource("1_qr580")
+
+[node name="bg" type="Sprite2D" parent="."]
+position = Vector2(960, 539.99994)
+scale = Vector2(1.9999999, 1.4999999)
+texture = ExtResource("2_4yq72")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("1_s34vi")
+volume_db = 10.0
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_qr580")
+volume_db = 6.0
+
+[node name="counter" type="ColorRect" parent="."]
+offset_left = 892.0
+offset_right = 1032.0
+offset_bottom = 80.0
+color = Color(0.23392546, 0.23392546, 0.23392543, 1)
+
+[node name="Label" type="Label" parent="counter"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = -6.0
+offset_right = 108.0
+offset_bottom = 82.0
+text = "30"
+label_settings = SubResource("LabelSettings_65m3o")
+
+[node name="Bullet" type="Sprite2D" parent="."]
+position = Vector2(979.99994, 598)
+scale = Vector2(3, 3)
+texture = ExtResource("5_n1l8g")
+script = ExtResource("6_8xppl")
+
+[node name="Area2D" type="Area2D" parent="Bullet"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bullet/Area2D"]
+position = Vector2(3.0517578e-05, 1.5258789e-05)
+shape = SubResource("RectangleShape2D_ogllf")
+debug_color = Color(1, 1, 1, 0)
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Bullet"]
+stream = ExtResource("7_t0bj4")
+
+[node name="shooter" type="Sprite2D" parent="."]
+position = Vector2(967.9999, 556.00006)
+rotation = -1.5762216
+scale = Vector2(3, 3)
+texture = ExtResource("5_kuwvy")
+
+[node name="Wawa" type="Sprite2D" parent="."]
+position = Vector2(958, 272)
+scale = Vector2(0.6, 0.5)
+texture = ExtResource("6_ogllf")
+script = ExtResource("7_n1l8g")
+
+[node name="Area2D" type="Area2D" parent="Wawa"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Wawa/Area2D"]
+shape = SubResource("RectangleShape2D_ogllf")
+debug_color = Color(1, 1, 1, 0)
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Wawa"]
+stream = ExtResource("10_nbw8p")
+
+[node name="popup" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(969, 531)
+scale = Vector2(2, 2)
+texture = ExtResource("3_s34vi")
+
+[node name="ok" type="TextureButton" parent="popup"]
+offset_left = -96.0
+offset_top = 22.0
+offset_right = 86.0
+offset_bottom = 80.0
+texture_normal = ExtResource("4_kuwvy")
+texture_hover = ExtResource("5_3x2jc")
+
+[node name="blackbg" type="ColorRect" parent="."]
+visible = false
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 1)
+
+[node name="youlost" type="Label" parent="."]
+visible = false
+offset_left = 711.0
+offset_top = 416.0
+offset_right = 1199.0
+offset_bottom = 591.0
+text = "you lost"
+label_settings = SubResource("LabelSettings_kuwvy")
+
+[connection signal="area_entered" from="Wawa/Area2D" to="Wawa" method="_on_area_2d_area_entered"]
+[connection signal="pressed" from="popup/ok" to="." method="_on_ok_pressed"]

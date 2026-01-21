@@ -1,0 +1,70 @@
+[gd_scene load_steps=6 format=3 uid="uid://6lc46nvy5t8r"]
+
+[ext_resource type="Script" uid="uid://dlimy2112085d" path="res://scripts/winscreen.gd" id="1_wg0yv"]
+[ext_resource type="AudioStream" uid="uid://drxktugew2cgg" path="res://audio/win.mp3" id="2_unfcc"]
+[ext_resource type="Texture2D" uid="uid://dtcdhks02cs83" path="res://images/randomimages/milly.jpg" id="3_unfcc"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_l4jp6"]
+font_size = 128
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_unfcc"]
+font_size = 64
+font_color = Color(0, 0, 0, 1)
+
+[node name="winscreen" type="Node2D"]
+script = ExtResource("1_wg0yv")
+
+[node name="bg" type="ColorRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_unfcc")
+volume_db = 12.0
+
+[node name="Label" type="Label" parent="."]
+offset_left = 173.0
+offset_top = 24.0
+offset_right = 775.0
+offset_bottom = 199.0
+scale = Vector2(2, 1)
+text = "you win :)"
+label_settings = SubResource("LabelSettings_l4jp6")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = 183.0
+offset_top = 375.0
+offset_right = 1450.0
+offset_bottom = 752.0
+texture = ExtResource("3_unfcc")
+expand_mode = 1
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 83.0
+offset_top = 173.0
+offset_right = 343.0
+offset_bottom = 261.0
+scale = Vector2(1, 2)
+text = "milly.jpg"
+label_settings = SubResource("LabelSettings_unfcc")
+
+[node name="Label3" type="Label" parent="."]
+offset_left = 15.0
+offset_top = 972.0
+offset_right = 843.0
+offset_bottom = 1060.0
+scale = Vector2(1, 0.5)
+text = "something something.mp3"
+label_settings = SubResource("LabelSettings_unfcc")
+
+[node name="Label4" type="Label" parent="."]
+offset_left = 205.0
+offset_top = 823.0
+offset_right = 1395.0
+offset_bottom = 911.0
+scale = Vector2(1, 0.5)
+text = "click the image to go back to the menu"
+label_settings = SubResource("LabelSettings_unfcc")
+
+[connection signal="gui_input" from="TextureRect" to="." method="_on_texture_rect_gui_input"]

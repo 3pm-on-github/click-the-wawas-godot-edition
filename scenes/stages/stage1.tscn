@@ -1,0 +1,93 @@
+[gd_scene load_steps=12 format=3 uid="uid://d3p8ul6par7wv"]
+
+[ext_resource type="Script" uid="uid://4hhut427uu6h" path="res://scripts/stages/stage1.gd" id="1_y7b51"]
+[ext_resource type="AudioStream" uid="uid://bqla2getn3bk3" path="res://audio/gamemusic.wav" id="2_rsk2y"]
+[ext_resource type="AudioStream" uid="uid://byj8nhv4k7b2c" path="res://audio/newpopup.wav" id="3_8qn6h"]
+[ext_resource type="Texture2D" uid="uid://djjlkxswrw8xw" path="res://images/popups/popup1.png" id="4_5l3ac"]
+[ext_resource type="Texture2D" uid="uid://duf7bmma6ycgr" path="res://images/ok.png" id="5_k4pqf"]
+[ext_resource type="Texture2D" uid="uid://p3p8ml4vybls" path="res://images/okhover.png" id="6_amlt1"]
+[ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="7_blxdk"]
+[ext_resource type="Script" uid="uid://dksle1bq6jccg" path="res://scripts/wawa.gd" id="8_rptx6"]
+[ext_resource type="AudioStream" uid="uid://m4ppqceas50u" path="res://audio/ow.wav" id="9_ohosn"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_p57ef"]
+font_size = 64
+
+[sub_resource type="LabelSettings" id="LabelSettings_0tnpc"]
+font_size = 128
+
+[node name="stage1" type="Node2D"]
+script = ExtResource("1_y7b51")
+
+[node name="bg" type="ColorRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_rsk2y")
+volume_db = 10.0
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_8qn6h")
+volume_db = 6.0
+
+[node name="counter" type="ColorRect" parent="."]
+offset_left = 892.0
+offset_right = 1032.0
+offset_bottom = 80.0
+color = Color(0.23392546, 0.23392546, 0.23392543, 1)
+
+[node name="Label" type="Label" parent="counter"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = -6.0
+offset_right = 108.0
+offset_bottom = 82.0
+text = "30"
+label_settings = SubResource("LabelSettings_p57ef")
+
+[node name="popup" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(969, 531)
+scale = Vector2(2, 2)
+texture = ExtResource("4_5l3ac")
+
+[node name="ok" type="TextureButton" parent="popup"]
+offset_left = -96.0
+offset_top = 22.0
+offset_right = 86.0
+offset_bottom = 80.0
+texture_normal = ExtResource("5_k4pqf")
+texture_hover = ExtResource("6_amlt1")
+
+[node name="wawa" type="TextureButton" parent="."]
+visible = false
+offset_left = 1834.0
+offset_top = 984.0
+offset_right = 1977.0
+offset_bottom = 1176.0
+scale = Vector2(0.6, 0.5)
+texture_normal = ExtResource("7_blxdk")
+script = ExtResource("8_rptx6")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="wawa"]
+stream = ExtResource("9_ohosn")
+volume_db = 3.0
+
+[node name="blackbg" type="ColorRect" parent="."]
+visible = false
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 1)
+
+[node name="youlost" type="Label" parent="."]
+visible = false
+offset_left = 711.0
+offset_top = 416.0
+offset_right = 1199.0
+offset_bottom = 591.0
+text = "you lost"
+label_settings = SubResource("LabelSettings_0tnpc")
+
+[connection signal="pressed" from="popup/ok" to="." method="_on_ok_pressed"]
+[connection signal="pressed" from="wawa" to="wawa" method="_on_pressed"]

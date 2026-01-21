@@ -1,0 +1,122 @@
+[gd_scene load_steps=7 format=3 uid="uid://bk7njnb8k7qhy"]
+
+[ext_resource type="Script" uid="uid://bubou1ekt4wf7" path="res://scripts/wawabossfight.gd" id="1_55s2e"]
+[ext_resource type="AudioStream" uid="uid://bnnlmw53ikxaf" path="res://audio/whydoyouhavetoclickmesomuch.wav" id="2_tplii"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_tplii"]
+font_size = 64
+
+[sub_resource type="LabelSettings" id="LabelSettings_gaaf7"]
+font_size = 128
+
+[sub_resource type="LabelSettings" id="LabelSettings_rdtun"]
+font_size = 412
+
+[sub_resource type="LabelSettings" id="LabelSettings_8t2aj"]
+font_size = 64
+
+[node name="wawabossfight" type="Node2D"]
+script = ExtResource("1_55s2e")
+
+[node name="blackbg" type="ColorRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 1)
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_tplii")
+volume_db = 6.0
+
+[node name="words" type="Node2D" parent="."]
+
+[node name="why" type="Label" parent="words"]
+visible = false
+offset_left = 352.0
+offset_top = 418.0
+offset_right = 479.0
+offset_bottom = 506.0
+text = "why"
+label_settings = SubResource("LabelSettings_tplii")
+
+[node name="do" type="Label" parent="words"]
+visible = false
+offset_left = 533.0
+offset_top = 375.0
+offset_right = 613.0
+offset_bottom = 463.0
+text = "do"
+label_settings = SubResource("LabelSettings_tplii")
+
+[node name="you" type="Label" parent="words"]
+visible = false
+offset_left = 649.0
+offset_top = 454.0
+offset_right = 763.0
+offset_bottom = 542.0
+text = "you"
+label_settings = SubResource("LabelSettings_tplii")
+
+[node name="have" type="Label" parent="words"]
+visible = false
+offset_left = 799.0
+offset_top = 265.0
+offset_right = 948.0
+offset_bottom = 353.0
+text = "have"
+label_settings = SubResource("LabelSettings_tplii")
+
+[node name="to" type="Label" parent="words"]
+visible = false
+offset_left = 962.0
+offset_top = 593.0
+offset_right = 1032.0
+offset_bottom = 681.0
+text = "to"
+label_settings = SubResource("LabelSettings_tplii")
+
+[node name="click" type="Label" parent="words"]
+visible = false
+offset_left = 988.0
+offset_top = 253.0
+offset_right = 1124.0
+offset_bottom = 341.0
+text = "click"
+label_settings = SubResource("LabelSettings_tplii")
+
+[node name="me" type="Label" parent="words"]
+visible = false
+offset_left = 1153.0
+offset_top = 431.0
+offset_right = 1255.0
+offset_bottom = 519.0
+text = "me"
+label_settings = SubResource("LabelSettings_tplii")
+
+[node name="so" type="Label" parent="."]
+visible = false
+offset_left = 846.0
+offset_top = 439.0
+offset_right = 1057.0
+offset_bottom = 614.0
+text = "so.."
+label_settings = SubResource("LabelSettings_gaaf7")
+
+[node name="much" type="Label" parent="."]
+visible = false
+offset_left = 35.0
+offset_top = 220.0
+offset_right = 2343.0
+offset_bottom = 918.0
+text = "MUCH?!?!"
+label_settings = SubResource("LabelSettings_rdtun")
+
+[node name="nvmilldoitlater" type="Label" parent="."]
+visible = false
+offset_left = 429.0
+offset_top = 472.0
+offset_right = 1498.0
+offset_bottom = 560.0
+text = "will finish the wawa bossfight later"
+label_settings = SubResource("LabelSettings_8t2aj")

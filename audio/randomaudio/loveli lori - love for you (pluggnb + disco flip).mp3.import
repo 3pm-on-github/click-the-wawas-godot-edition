@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://1uejyyetk077"
+path="res://.godot/imported/loveli lori - love for you (pluggnb + disco flip).mp3-a361675738a0bd58817d12123b21d2df.mp3str"
+
+[deps]
+
+source_file="res://audio/randomaudio/loveli lori - love for you (pluggnb + disco flip).mp3"
+dest_files=["res://.godot/imported/loveli lori - love for you (pluggnb + disco flip).mp3-a361675738a0bd58817d12123b21d2df.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

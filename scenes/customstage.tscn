@@ -1,0 +1,125 @@
+[gd_scene load_steps=15 format=3 uid="uid://yemloaq6osi1"]
+
+[ext_resource type="Script" uid="uid://bvyyskoe4l7u7" path="res://scripts/customstage.gd" id="1_ma1as"]
+[ext_resource type="AudioStream" uid="uid://e00mlucx8f0x" path="res://audio/customstagemusic.mp3" id="2_3bg5e"]
+[ext_resource type="AudioStream" uid="uid://byj8nhv4k7b2c" path="res://audio/newpopup.wav" id="2_ma1as"]
+[ext_resource type="Texture2D" uid="uid://djjlkxswrw8xw" path="res://images/popups/popup1.png" id="3_yoch7"]
+[ext_resource type="Texture2D" uid="uid://duf7bmma6ycgr" path="res://images/ok.png" id="4_6rj5o"]
+[ext_resource type="Texture2D" uid="uid://p3p8ml4vybls" path="res://images/okhover.png" id="5_3bg5e"]
+[ext_resource type="Script" uid="uid://b0vsslp3ftujr" path="res://scripts/wawa2.gd" id="5_q6f75"]
+[ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="7_3bg5e"]
+[ext_resource type="Texture2D" uid="uid://hld6g60e7go7" path="res://images/mrfresh.png" id="7_kagxx"]
+[ext_resource type="Script" uid="uid://cfas5xafut7ie" path="res://scripts/mrfresh2.gd" id="8_vcth8"]
+[ext_resource type="AudioStream" uid="uid://m4ppqceas50u" path="res://audio/ow.wav" id="9_kagxx"]
+[ext_resource type="AudioStream" uid="uid://b4mjqk2i8v7ot" path="res://audio/tp.mp3" id="9_vcth8"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_xagkn"]
+font_size = 64
+
+[sub_resource type="LabelSettings" id="LabelSettings_lucxk"]
+font_size = 128
+
+[node name="customstage" type="Node2D"]
+script = ExtResource("1_ma1as")
+
+[node name="bg" type="ColorRect" parent="."]
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_3bg5e")
+volume_db = 10.0
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_ma1as")
+volume_db = 6.0
+
+[node name="counter" type="ColorRect" parent="."]
+offset_left = 892.0
+offset_right = 1032.0
+offset_bottom = 80.0
+color = Color(0.23392546, 0.23392546, 0.23392543, 1)
+
+[node name="Label" type="Label" parent="counter"]
+layout_mode = 0
+offset_left = 35.0
+offset_top = -6.0
+offset_right = 108.0
+offset_bottom = 82.0
+text = "30"
+label_settings = SubResource("LabelSettings_xagkn")
+
+[node name="wawa" type="TextureButton" parent="."]
+visible = false
+offset_left = 903.0
+offset_top = 419.0
+offset_right = 1046.0
+offset_bottom = 611.0
+scale = Vector2(0.6, 0.5)
+texture_normal = ExtResource("7_3bg5e")
+script = ExtResource("5_q6f75")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="wawa"]
+stream = ExtResource("9_kagxx")
+volume_db = 3.0
+
+[node name="mrfresh" type="TextureButton" parent="."]
+visible = false
+offset_left = 903.0
+offset_top = 419.0
+offset_right = 1046.0
+offset_bottom = 611.0
+scale = Vector2(0.25, 0.25)
+texture_normal = ExtResource("7_kagxx")
+script = ExtResource("8_vcth8")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="mrfresh"]
+stream = ExtResource("9_vcth8")
+volume_db = 3.0
+
+[node name="popup" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(969, 531)
+scale = Vector2(2, 2)
+texture = ExtResource("3_yoch7")
+
+[node name="block" type="ColorRect" parent="popup"]
+offset_left = -341.5
+offset_top = -82.5
+offset_right = -152.5
+offset_bottom = -42.5
+color = Color(0.3529412, 0.3529412, 0.3529412, 1)
+
+[node name="Label" type="Label" parent="popup"]
+offset_left = -345.0
+offset_top = -86.5
+offset_right = -288.0
+offset_bottom = -63.5
+text = "Default"
+
+[node name="ok" type="TextureButton" parent="popup"]
+offset_left = -96.0
+offset_top = 22.0
+offset_right = 86.0
+offset_bottom = 80.0
+texture_normal = ExtResource("4_6rj5o")
+texture_hover = ExtResource("5_3bg5e")
+
+[node name="blackbg" type="ColorRect" parent="."]
+visible = false
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 1)
+
+[node name="youlost" type="Label" parent="."]
+visible = false
+offset_left = 711.0
+offset_top = 416.0
+offset_right = 1199.0
+offset_bottom = 591.0
+text = "you lost"
+label_settings = SubResource("LabelSettings_lucxk")
+
+[connection signal="pressed" from="wawa" to="wawa" method="_on_pressed"]
+[connection signal="pressed" from="mrfresh" to="mrfresh" method="_on_pressed"]
+[connection signal="pressed" from="popup/ok" to="." method="_on_ok_pressed"]
