@@ -1,8 +1,20 @@
-[gd_resource type="AudioBusLayout" load_steps=2 format=3 uid="uid://brvq3jwmt00x3"]
+[gd_resource type="AudioBusLayout" load_steps=3 format=3 uid="uid://brvq3jwmt00x3"]
 
 [sub_resource type="AudioEffectSpectrumAnalyzer" id="AudioEffectSpectrumAnalyzer_j3pel"]
 resource_name = "SpectrumAnalyzer"
 
+[sub_resource type="AudioEffectEQ" id="AudioEffectEQ_j3pel"]
+resource_name = "EQ"
+band_db/32_hz = 6.0
+band_db/100_hz = 6.0
+band_db/320_hz = 6.0
+band_db/1000_hz = 4.0
+band_db/3200_hz = 2.0
+band_db/10000_hz = 6.0
+
 [resource]
+bus/0/volume_db = -0.72599316
 bus/0/effect/0/effect = SubResource("AudioEffectSpectrumAnalyzer_j3pel")
 bus/0/effect/0/enabled = true
+bus/0/effect/1/effect = SubResource("AudioEffectEQ_j3pel")
+bus/0/effect/1/enabled = true

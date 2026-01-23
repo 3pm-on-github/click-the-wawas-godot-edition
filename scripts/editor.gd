@@ -50,6 +50,7 @@ func _read_u32(src: PackedByteArray, i: int) -> int:
 #     u8   y low
 #     u8   flags
 
+var finalpath = ""
 func save():
 	var out := PackedByteArray()
 
@@ -84,8 +85,9 @@ func save():
 		out.append(x & 0xFF)
 		out.append(y & 0xFF)
 		out.append(flags)
-
-	save_to_file(out, "user://customstages/"+returnsha256(out)+".ctw")
+	
+	finalpath = "user://customstages/"+returnsha256(out)+".ctw"
+	save_to_file(out, finalpath)
 
 func loadcontent() -> Dictionary:
 	var src: PackedByteArray = load_from_file("user://customstages/savedata.dat") # will be changed soon
@@ -297,6 +299,7 @@ func _on_bg_gui_input(event: InputEvent) -> void:
 
 func _on_tryitbtn_pressed() -> void:
 	save()
+	Global.customstagetotry = finalpath
 	focus = ""
 	$blackbg.visible = true
 	$AudioStreamPlayer2D3.stream = load("res://audio/editortry.ogg")

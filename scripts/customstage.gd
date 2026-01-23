@@ -1,7 +1,7 @@
 extends Node2D
 
 func load_from_file():
-	var content = FileAccess.get_file_as_bytes("user://savedata.dat")
+	var content = FileAccess.get_file_as_bytes(Global.customstagetotry)
 	return content
 
 func _read_u32(src: PackedByteArray, i: int) -> int:
