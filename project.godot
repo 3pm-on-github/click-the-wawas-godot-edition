@@ -15,7 +15,7 @@ config/version="0.2.0"
 run/main_scene="uid://b8ueb5rpipof4"
 config/features=PackedStringArray("4.5", "Forward Plus")
 boot_splash/bg_color=Color(0, 0, 0, 1)
-boot_splash/show_image=false
+boot_splash/image="uid://nrd6wgr0wf5k"
 config/icon="uid://cmiu3tsk657of"
 
 [autoload]
