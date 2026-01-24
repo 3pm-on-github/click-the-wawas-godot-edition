@@ -17,8 +17,9 @@
 font_size = 64
 
 [sub_resource type="Gradient" id="Gradient_vcth8"]
-offsets = PackedFloat32Array(0.42138365, 1)
+offsets = PackedFloat32Array(0.42138362, 1)
 colors = PackedColorArray(0.5647059, 1, 1, 1, 1, 1, 1, 0)
+metadata/_snap_count = 2
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_bn1wo"]
 gradient = SubResource("Gradient_vcth8")

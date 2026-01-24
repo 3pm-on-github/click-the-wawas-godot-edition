@@ -276,6 +276,7 @@ scale = Vector2(2, 2)
 text = "Play"
 
 [node name="editlightspopup" type="ColorRect" parent="."]
+visible = false
 offset_left = 646.0
 offset_top = 327.0
 offset_right = 1286.0

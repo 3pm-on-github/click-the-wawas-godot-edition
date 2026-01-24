@@ -1,72 +1,13 @@
 extends Node2D
 
-func load_from_file():
-	var content = FileAccess.get_file_as_bytes(Global.customstagetotry)
+func load_from_file(path):
+	var content = FileAccess.get_file_as_bytes(path)
 	return content
-
-func _read_u32(src: PackedByteArray, i: int) -> int:
-	return (src[i] << 24) | (src[i + 1] << 16) | (src[i + 2] << 8) | src[i + 3]
-
+	
 func loadcontent() -> Dictionary:
-	var src: PackedByteArray = load_from_file()
-
-	var result := {
-		"counter": 30,
-		"popup_text": "Default",
-		"music_encodeddata": "",
-		"elements": []
-	}
-
-	if src.is_empty():
-		return result
-
-	var i := 0
-
-	result["counter"] = src[i]
-	i += 1
-
-	var popup := ""
-	while i < src.size() and src[i] != 0x00:
-		popup += char(src[i])
-		i += 1
-	result["popup_text"] = popup
-
-	if i >= src.size():
-		return result
-	i += 1
-
-	if i + 4 > src.size():
-		return result
-
-	var music_len := _read_u32(src, i)
-	i += 4
-
-	if i + music_len > src.size():
-		return result
-
-	result["music_encodeddata"] = \
-		src.slice(i, i + music_len).get_string_from_utf8()
-	i += music_len
-
-	var elements := []
-	while i + 3 < src.size():
-		var b0 := src[i]
-		var b1 := src[i + 1]
-		var b2 := src[i + 2]
-		var b3 := src[i + 3]
-
-		elements.append({
-			"id": b0 & 0b11,
-			"x": (((b0 >> 2) & 0b111) << 8) | b1,
-			"y": (((b0 >> 5) & 0b111) << 8) | b2,
-			"flags": b3
-		})
-
-		i += 4
-
-	result["elements"] = elements
-	return result
-
+	var src: PackedByteArray = load_from_file(Global.customstagetotry)
+	return JSON.parse_string(src.get_string_from_utf8())
+	
 var bpm = 130.0
 var startpos = 0.055
 var loadedcontent = loadcontent()
@@ -81,12 +22,24 @@ func _ready() -> void:
 	$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_buffer(Marshalls.base64_to_raw(loadedcontent.music_encodeddata))
 	$AudioStreamPlayer2D.play(startpos)
 	$AudioStreamPlayer2D2.play()
-	lights()
+	if loadedcontent.lights_bpm != 0:
+		var lightstexture = GradientTexture1D.new()
+		var lightsgradient = Gradient.new()
+		lightsgradient.set_color(0.421, Color.from_rgba8(loadedcontent.lights_rgb[0], loadedcontent.lights_rgb[1], loadedcontent.lights_rgb[2], loadedcontent.lights_rgb[3]))
+		lightsgradient.set_color(1, Color.from_rgba8(255, 255, 255, 0))
+		lightstexture.set_gradient(lightsgradient)
+		$lights/lightl1.texture = lightstexture
+		$lights/lightl2.texture = lightstexture
+		$lights/lightr1.texture = lightstexture
+		$lights/lightr2.texture = lightstexture
+		bpm = loadedcontent.lights_bpm
+		startpos = loadedcontent.lights_startpos
+		lights()
 	for i in range(50):
 		$blackbg.modulate.a -= 0.02
 		await get_tree().create_timer(0.02).timeout
 	$blackbg.visible = false
-	
+
 func lights():
 	var toggle = false
 	while true:
@@ -149,8 +102,8 @@ func _on_ok_pressed() -> void:
 			copy.mrfresh_clicked.connect(_on_element_clicked)
 			elements.append(copy)
 			$mrfresh.get_parent().add_child(copy)
-	var counter = loadedcontent.counter+1
-	for i in range(loadedcontent.counter+1):
+	var counter = int(loadedcontent.counter)+1
+	for i in range(counter):
 		$AudioStreamPlayer2D2.stream = load("res://audio/tick.wav")
 		$AudioStreamPlayer2D2.play()
 		counter-=1

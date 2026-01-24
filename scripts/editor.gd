@@ -10,7 +10,10 @@ func int_to_11bit(value: int) -> String:
 
 func save_to_file(content, path):
 	var file = FileAccess.open(path, FileAccess.WRITE)
-	file.store_buffer(content)
+	var data: PackedByteArray = PackedByteArray()
+	for character in content:
+		data.append(ord(character))
+	file.store_buffer(data)
 	file.close()
 
 func load_from_file(path):
@@ -21,12 +24,14 @@ func load_and_returnb64(path):
 	var content = FileAccess.get_file_as_bytes(path)
 	return Marshalls.raw_to_base64(content)
 
-func returnsha256(data: PackedByteArray) -> String:
+func returnsha256(data: Dictionary) -> String:
+	var json_string := JSON.stringify(data)
+	var bytes: PackedByteArray = json_string.to_utf8_buffer()
 	var ctx := HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)
-	ctx.update(data)
-	var hash: PackedByteArray = ctx.finish()
-	return hash.hex_encode()
+	ctx.update(bytes)
+	var hashed: PackedByteArray = ctx.finish()
+	return hashed.hex_encode()
 
 func _write_u32(dst: PackedByteArray, v: int) -> void:
 	dst.append((v >> 24) & 0xFF)
@@ -45,6 +50,12 @@ func _write_u16(dst: PackedByteArray, v: int) -> void:
 
 func _read_u32(src: PackedByteArray, i: int) -> int:
 	return (src[i] << 24) | (src[i + 1] << 16) | (src[i + 2] << 8) | src[i + 3]
+	
+func _read_u24(src: PackedByteArray, i: int) -> int:
+	return(src[i] << 16) | (src[i + 1] << 8) | src[i + 2]
+	
+func _read_u16(src: PackedByteArray, i: int) -> int:
+	return (src[i] << 8) | src[i + 1]
 
 # storage method:
 # u8    counter
@@ -67,107 +78,44 @@ func _read_u32(src: PackedByteArray, i: int) -> int:
 
 var finalpath = ""
 func save():
-	var out := PackedByteArray()
-
-	out.append((digit1 * 10) + digit2)
-
-	for c in popuptext:
-		out.append(ord(c))
-	out.append(0x00)
-
-	var music_b64: String = load_and_returnb64(musicpath)
-	var music_bytes := music_b64.to_utf8_buffer()
-
-	_write_u32(out, music_bytes.size())
-	out.append_array(music_bytes)
-
+	var out := {}
+	out['counter'] = digit1*10+digit2
+	out['popup_text'] = popuptext
+	out['lights_bpm'] = 0 if not lightsenabled else lightsbpm
+	out['lights_startpos'] = lightsstarttime*1000
+	out['lights_rgb'] = [lightsrgb.r8, lightsrgb.g8, lightsrgb.b8, lightsrgb.a8]
+	out['music_encodeddata'] = load_and_returnb64(musicpath)
+	out['elements'] = []
 	for element in elements:
 		var id = element.elementid
 		var x := int(element.position.x)
 		var y := int(element.position.y)
 		var flags := 0
-
-		assert(id >= 0 and id < 4)
-		assert(x >= 0 and x < 2048)
-		assert(y >= 0 and y < 2048)
-		assert(flags >= 0 and flags < 256)
-
-		out.append(
-			(id & 0b11) |
-			(((x >> 8) & 0b111) << 2) |
-			(((y >> 8) & 0b111) << 5)
-		)
-		out.append(x & 0xFF)
-		out.append(y & 0xFF)
-		out.append(flags)
-	
+		assert(id >= 0)
+		assert(x >= 0)
+		assert(y >= 0)
+		assert(flags >= 0)
+		out["elements"].append({"id": id, "x": x, "y": y, "flags": flags})
 	finalpath = "user://customstages/"+returnsha256(out)+".ctw"
-	save_to_file(out, finalpath)
+	save_to_file(JSON.stringify(out), finalpath)
 
-func loadcontent() -> Dictionary:
+func loadcontent():
 	var src: PackedByteArray = load_from_file(Global.customstagetotry)
+	return JSON.parse_string(src.get_string_from_utf8())
 
-	var result := {
-		"counter": 30,
-		"popup_text": "Default",
-		"music_encodeddata": "",
-		"elements": []
-	}
-
-	if src.is_empty():
-		return result
-
-	var i := 0
-
-	result["counter"] = src[i]
-	i += 1
-
-	var popup := ""
-	while i < src.size() and src[i] != 0x00:
-		popup += char(src[i])
-		i += 1
-	result["popup_text"] = popup
-
-	if i >= src.size():
-		return result
-	i += 1
-
-	if i + 4 > src.size():
-		return result
-
-	var music_len := _read_u32(src, i)
-	i += 4
-
-	if i + music_len > src.size():
-		return result
-
-	result["music_encodeddata"] = \
-		src.slice(i, i + music_len).get_string_from_utf8()
-	i += music_len
-
-	var elementz := []
-	while i + 3 < src.size():
-		var b0 := src[i]
-		var b1 := src[i + 1]
-		var b2 := src[i + 2]
-		var b3 := src[i + 3]
-
-		elementz.append({
-			"id": b0 & 0b11,
-			"x": (((b0 >> 2) & 0b111) << 8) | b1,
-			"y": (((b0 >> 5) & 0b111) << 8) | b2,
-			"flags": b3
-		})
-
-		i += 4
-
-	result["elements"] = elementz
-	return result
-
-var loadedcontent = loadcontent()
+var loadedcontent = {
+	"counter": 30,
+	"popup_text": "Default",
+	"lights_bpm": 0,
+	"lights_startpos": 0,
+	"lights_rgb": [144, 255, 255, 255],
+	"elements": []
+}
 var wawacount = 0
 var mrfreshcount = 0
 func _ready() -> void:
+	if loadcontent():
+		loadedcontent = loadcontent()
 	DirAccess.make_dir_absolute("user://customstages")
 	$countereditpopup.visible = false
 	$editpopuppopup.visible = false
@@ -466,9 +414,9 @@ func _on_edit_lights_pressed() -> void:
 		element.visible = false
 	focus = ""
 
-var lightsbpm = 120
-var lightsstarttime = 0.0
-var lightsrgb = Color.from_rgba8(144, 255, 255, 255)
+var lightsbpm = loadedcontent.lights_bpm
+var lightsstarttime = loadedcontent.lights_startpos
+var lightsrgb = Color.from_rgba8(loadedcontent.lights_rgb[0], loadedcontent.lights_rgb[1], loadedcontent.lights_rgb[2], loadedcontent.lights_rgb[3])
 var lightsenabled = false
 func _on_editlights_donebtn_pressed() -> void:
 	$editlightspopup.visible = false
