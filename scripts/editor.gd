@@ -34,14 +34,29 @@ func _write_u32(dst: PackedByteArray, v: int) -> void:
 	dst.append((v >> 8) & 0xFF)
 	dst.append(v & 0xFF)
 
+func _write_u24(dst: PackedByteArray, v: int) -> void:
+	dst.append((v >> 16) & 0xFF)
+	dst.append((v >> 8) & 0xFF)
+	dst.append(v & 0xFF)
+	
+func _write_u16(dst: PackedByteArray, v: int) -> void:
+	dst.append((v >> 8) & 0xFF)
+	dst.append(v & 0xFF)
+
 func _read_u32(src: PackedByteArray, i: int) -> int:
 	return (src[i] << 24) | (src[i + 1] << 16) | (src[i + 2] << 8) | src[i + 3]
-
 
 # storage method:
 # u8    counter
 # bytes popup_text
 # u8    0x00
+# u16   lights_bpm (0 if disabled)
+# u24   lights_startpos (starttime*1000)
+# lights_rgb:
+#     u8   lights_red
+#     u8   lights_green
+#     u8   lights_blue
+#     u8   lights_alpha
 # u32   music_b64_length (big-endian)
 # bytes music_b64 (UTF-8)
 # repeat:
@@ -90,7 +105,7 @@ func save():
 	save_to_file(out, finalpath)
 
 func loadcontent() -> Dictionary:
-	var src: PackedByteArray = load_from_file("user://customstages/savedata.dat") # will be changed soon
+	var src: PackedByteArray = load_from_file(Global.customstagetotry)
 
 	var result := {
 		"counter": 30,
@@ -440,3 +455,29 @@ func _on_editmusic_playbtn_pressed() -> void:
 	else:
 		$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_file($editmusicpopup/LineEdit.text)
 	$AudioStreamPlayer2D.play()
+
+func _on_edit_lights_pressed() -> void:
+	$settingspopup.visible = false
+	$editlightspopup.visible = true
+	$editlightspopup/BPM.value = lightsbpm
+	$editlightspopup/StartTime.value = lightsstarttime
+	$editlightspopup/ColorPickerButton.color = lightsrgb
+	for element in elements:
+		element.visible = false
+	focus = ""
+
+var lightsbpm = 120
+var lightsstarttime = 0.0
+var lightsrgb = Color.from_rgba8(144, 255, 255, 255)
+var lightsenabled = false
+func _on_editlights_donebtn_pressed() -> void:
+	$editlightspopup.visible = false
+	lightsbpm = $editlightspopup/BPM.value
+	lightsstarttime = $editlightspopup/StartTime.value
+	lightsrgb = $editlightspopup/ColorPickerButton.color
+	for element in elements:
+		element.visible = true
+	focus = ""
+
+func _on_editlights_enabled_pressed() -> void:
+	lightsenabled = not lightsenabled

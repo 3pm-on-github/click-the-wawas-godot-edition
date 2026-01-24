@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://yemloaq6osi1"]
+[gd_scene load_steps=17 format=3 uid="uid://yemloaq6osi1"]
 
 [ext_resource type="Script" uid="uid://bvyyskoe4l7u7" path="res://scripts/customstage.gd" id="1_ma1as"]
 [ext_resource type="AudioStream" uid="uid://e00mlucx8f0x" path="res://audio/customstagemusic.mp3" id="2_3bg5e"]
@@ -15,6 +15,14 @@
 
 [sub_resource type="LabelSettings" id="LabelSettings_xagkn"]
 font_size = 64
+
+[sub_resource type="Gradient" id="Gradient_vcth8"]
+offsets = PackedFloat32Array(0.42138365, 1)
+colors = PackedColorArray(0.5647059, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_bn1wo"]
+gradient = SubResource("Gradient_vcth8")
+width = 207
 
 [sub_resource type="LabelSettings" id="LabelSettings_lucxk"]
 font_size = 128
@@ -76,6 +84,44 @@ script = ExtResource("8_vcth8")
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="mrfresh"]
 stream = ExtResource("9_vcth8")
 volume_db = 3.0
+
+[node name="lights" type="Node2D" parent="."]
+
+[node name="lightl1" type="TextureRect" parent="lights"]
+visible = false
+offset_left = 59.000015
+offset_top = 1090.0
+offset_right = 1420.72
+offset_bottom = 1297.234
+rotation = -1.1903145
+texture = SubResource("GradientTexture1D_bn1wo")
+
+[node name="lightl2" type="TextureRect" parent="lights"]
+visible = false
+offset_left = 90.0
+offset_top = 1103.0001
+offset_right = 1284.7698
+offset_bottom = 1310.2341
+rotation = -1.6737708
+texture = SubResource("GradientTexture1D_bn1wo")
+
+[node name="lightr1" type="TextureRect" parent="lights"]
+visible = false
+offset_left = 1680.0
+offset_top = 1174.0
+offset_right = 3041.7202
+offset_bottom = 1381.234
+rotation = -1.9844394
+texture = SubResource("GradientTexture1D_bn1wo")
+
+[node name="lightr2" type="TextureRect" parent="lights"]
+visible = false
+offset_left = 1653.9999
+offset_top = 1110.9999
+offset_right = 2848.7695
+offset_bottom = 1318.2339
+rotation = -1.506476
+texture = SubResource("GradientTexture1D_bn1wo")
 
 [node name="popup" type="Sprite2D" parent="."]
 visible = false
