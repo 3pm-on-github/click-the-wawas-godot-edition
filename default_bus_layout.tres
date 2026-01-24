@@ -1,4 +1,4 @@
-[gd_resource type="AudioBusLayout" load_steps=3 format=3 uid="uid://brvq3jwmt00x3"]
+[gd_resource type="AudioBusLayout" load_steps=4 format=3 uid="uid://brvq3jwmt00x3"]
 
 [sub_resource type="AudioEffectSpectrumAnalyzer" id="AudioEffectSpectrumAnalyzer_j3pel"]
 resource_name = "SpectrumAnalyzer"
@@ -12,9 +12,15 @@ band_db/1000_hz = 4.0
 band_db/3200_hz = 2.0
 band_db/10000_hz = 6.0
 
+[sub_resource type="AudioEffectLowPassFilter" id="AudioEffectLowPassFilter_j3pel"]
+resource_name = "LowPassFilter"
+cutoff_hz = 20500.0
+
 [resource]
 bus/0/volume_db = -0.72599316
 bus/0/effect/0/effect = SubResource("AudioEffectSpectrumAnalyzer_j3pel")
 bus/0/effect/0/enabled = true
 bus/0/effect/1/effect = SubResource("AudioEffectEQ_j3pel")
 bus/0/effect/1/enabled = true
+bus/0/effect/2/effect = SubResource("AudioEffectLowPassFilter_j3pel")
+bus/0/effect/2/enabled = true

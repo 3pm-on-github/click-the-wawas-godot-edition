@@ -139,10 +139,10 @@ texture_hover = ExtResource("9_70i5f")
 [node name="solomenu" type="Node2D" parent="."]
 
 [node name="title" type="Label" parent="solomenu"]
-offset_left = 50.0
-offset_top = 30.0
-offset_right = 460.0
-offset_bottom = 162.0
+offset_left = 1349.0
+offset_top = 14.0
+offset_right = 1895.0
+offset_bottom = 189.0
 text = "solo play"
 label_settings = SubResource("LabelSettings_7jp70")
 
@@ -169,12 +169,20 @@ text = "wawawawawawawawawawawawawawaw"
 label_settings = SubResource("LabelSettings_g6gyw")
 
 [node name="classicstagesbtn" type="Button" parent="solomenu"]
-offset_left = 1337.0
-offset_top = 31.0
-offset_right = 1449.0
-offset_bottom = 62.0
-scale = Vector2(5, 5)
+offset_left = 18.000002
+offset_top = 23.00003
+offset_right = 130.0
+offset_bottom = 54.00003
+scale = Vector2(2.5, 2.5)
 text = "classic stages"
+
+[node name="customstagebtn" type="Button" parent="solomenu"]
+offset_left = 18.99988
+offset_top = 116.00003
+offset_right = 130.99988
+offset_bottom = 147.00003
+scale = Vector2(2.5, 2.5)
+text = "custom stage"
 
 [node name="blackbg" type="ColorRect" parent="."]
 visible = false

@@ -4,6 +4,9 @@ func _process(_delta: float) -> void:
 
 var focus = ""
 var elements = []
+@onready var audioblur := AudioServer.get_bus_effect(
+	AudioServer.get_bus_index("Master"), 2
+) as AudioEffectLowPassFilter
 
 func int_to_11bit(value: int) -> String:
 	return String.num_uint64(value & 0x7FF, 2).pad_zeros(11)
@@ -153,8 +156,8 @@ func _ready() -> void:
 			$mrfresh.get_parent().add_child(copy)
 		else:
 			assert(false, "Error: Invalid Element ID "+str(element.id)+"\nYour Saved Stage Data is corrupted.")
-	$WawaSelector/counter.text = str(wawacount)
-	$MrFreshSelector/counter.text = str(mrfreshcount)
+	$selectorbg/WawaSelector/counter.text = str(wawacount)
+	$selectorbg/MrFreshSelector/counter.text = str(mrfreshcount)
 	DiscordRPC.state = "editing a stage ("+popuptext+")"
 	DiscordRPC.refresh()
 	for i in range(50):
@@ -242,7 +245,7 @@ func _on_bg_gui_input(event: InputEvent) -> void:
 			$AudioStreamPlayer2D3.play()
 			elements.append(copy)
 			$wawa.get_parent().add_child(copy)
-			$WawaSelector/counter.text = str(wawacount)
+			$selectorbg/WawaSelector/counter.text = str(wawacount)
 		elif focus == "Mr Fresh":
 			$AudioStreamPlayer2D2.play()
 			var copy = $mrfresh.duplicate()
@@ -258,7 +261,7 @@ func _on_bg_gui_input(event: InputEvent) -> void:
 			$AudioStreamPlayer2D3.play()
 			elements.append(copy)
 			$mrfresh.get_parent().add_child(copy)
-			$MrFreshSelector/counter.text = str(mrfreshcount)
+			$selectorbg/MrFreshSelector/counter.text = str(mrfreshcount)
 
 func _on_tryitbtn_pressed() -> void:
 	save()
@@ -316,9 +319,22 @@ func _on_back_to_menu_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/menu.tscn")
 
 func _on_delete_stage_pressed() -> void:
+	$deletestagepopup.modulate.a = 0.0
+	$deletestagepopup.visible = true
+	AudioServer.set_bus_effect_enabled(AudioServer.get_bus_index("Master"), 2, true)
+	var tween = get_tree().create_tween()
+	tween.tween_property(audioblur, "cutoff_hz", 400, 0.5).set_trans(Tween.TRANS_SINE)
+	for i in range(25):
+		$counter.modulate.a -= 0.04
+		$selectorbg.modulate.a -= 0.04
+		$settingspopup.modulate.a -= 0.04
+		$deletestagepopup.modulate.a += 0.04
+		await get_tree().create_timer(0.01).timeout
 	$settingspopup.visible = false
-	$AudioStreamPlayer2D3.stream = load("res://audio/editordelete.mp3")
-	$AudioStreamPlayer2D3.play()
+	$settingspopup.modulate.a = 1.0
+
+func _on_deletestage_yesbtn_pressed() -> void:
+	$deletestagepopup.visible = false
 	for element in elements:
 		element.queue_free()
 	elements = []
@@ -332,17 +348,41 @@ func _on_delete_stage_pressed() -> void:
 	save()
 	wawacount = 0
 	mrfreshcount = 0
-	$WawaSelector/counter.text = str(wawacount)
-	$MrFreshSelector/counter.text = str(wawacount)
+	$selectorbg/WawaSelector/counter.text = str(wawacount)
+	$selectorbg/MrFreshSelector/counter.text = str(wawacount)
 	DiscordRPC.state = "editing a stage ("+popuptext+")"
 	DiscordRPC.refresh()
+	var tween = get_tree().create_tween()
+	tween.tween_property(audioblur, "cutoff_hz", 20500, 0.5).set_trans(Tween.TRANS_SINE)
+	$AudioStreamPlayer2D3.stream = load("res://audio/editordelete.mp3")
+	$AudioStreamPlayer2D3.play()
+	for i in range(25):
+		$counter.modulate.a += 0.04
+		$selectorbg.modulate.a += 0.04
+		await get_tree().create_timer(0.02).timeout
+	AudioServer.set_bus_effect_enabled(AudioServer.get_bus_index("Master"), 2, false)
+	
+func _on_deletestage_nobtn_pressed() -> void:
+	$deletestagepopup.visible = false
+	for element in elements:
+		element.modulate.a = 0.0
+		element.visible = true
+	var tween = get_tree().create_tween()
+	tween.tween_property(audioblur, "cutoff_hz", 20500, 0.5).set_trans(Tween.TRANS_SINE)
+	for i in range(25):
+		for element in elements:
+			element.modulate.a += 0.04
+		$counter.modulate.a += 0.04
+		$selectorbg.modulate.a += 0.04
+		await get_tree().create_timer(0.02).timeout
+	AudioServer.set_bus_effect_enabled(AudioServer.get_bus_index("Master"), 2, false)
 
 func _on_wawa_remove_me(wawa):
 	$AudioStreamPlayer2D3.stream = load("res://audio/editordelete.mp3")
 	$AudioStreamPlayer2D2.play()
 	$AudioStreamPlayer2D3.play()
 	wawacount -= 1
-	$WawaSelector/counter.text = str(wawacount)
+	$selectorbg/WawaSelector/counter.text = str(wawacount)
 	elements.erase(wawa)
 	wawa.queue_free()
 	
@@ -351,7 +391,7 @@ func _on_mrfresh_remove_me(mrfresh):
 	$AudioStreamPlayer2D2.play()
 	$AudioStreamPlayer2D3.play()
 	mrfreshcount -= 1
-	$MrFreshSelector/counter.text = str(mrfreshcount)
+	$selectorbg/MrFreshSelector/counter.text = str(mrfreshcount)
 	elements.erase(mrfresh)
 	mrfresh.queue_free()
 

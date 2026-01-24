@@ -12,6 +12,11 @@
 [sub_resource type="LabelSettings" id="LabelSettings_pxqd5"]
 font_size = 64
 
+[sub_resource type="LabelSettings" id="LabelSettings_eqbpn"]
+font_size = 38
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
 [sub_resource type="LabelSettings" id="LabelSettings_xg7d5"]
 font_size = 32
 
@@ -19,18 +24,13 @@ font_size = 32
 font_size = 128
 
 [sub_resource type="LabelSettings" id="LabelSettings_5lcyj"]
-font_size = 48
+font_size = 32
 
 [sub_resource type="LabelSettings" id="LabelSettings_ba0ut"]
 font_size = 48
 
 [sub_resource type="LabelSettings" id="LabelSettings_5tm2q"]
 font_size = 32
-
-[sub_resource type="LabelSettings" id="LabelSettings_eqbpn"]
-font_size = 38
-outline_size = 10
-outline_color = Color(0, 0, 0, 1)
 
 [node name="editor" type="Node2D"]
 script = ExtResource("1_pxqd5")
@@ -59,11 +59,100 @@ offset_left = 892.0
 offset_right = 1032.0
 offset_bottom = 80.0
 
+[node name="wawa" type="TextureButton" parent="."]
+visible = false
+offset_left = 933.0
+offset_top = 409.0
+offset_right = 1076.0
+offset_bottom = 601.0
+scale = Vector2(0.6, 0.5)
+texture_normal = ExtResource("1_b1cmn")
+script = ExtResource("3_eqbpn")
+
+[node name="mrfresh" type="TextureButton" parent="."]
+visible = false
+offset_left = 933.0
+offset_top = 409.0
+offset_right = 1353.0
+offset_bottom = 829.0
+scale = Vector2(0.25, 0.25)
+texture_normal = ExtResource("4_5lcyj")
+script = ExtResource("5_5tm2q")
+
 [node name="selectorbg" type="ColorRect" parent="."]
 offset_top = 946.0
 offset_right = 1920.0
 offset_bottom = 1080.0
 color = Color(0.46618086, 0.4661808, 0.4661808, 1)
+
+[node name="WawaSelector" type="Button" parent="selectorbg"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 17.0
+offset_right = 217.0
+offset_bottom = 217.0
+scale = Vector2(0.5, 0.5)
+icon = ExtResource("1_b1cmn")
+icon_alignment = 1
+
+[node name="counter" type="Label" parent="selectorbg/WawaSelector"]
+layout_mode = 0
+offset_left = 120.0
+offset_top = 148.0
+offset_right = 198.0
+offset_bottom = 201.0
+text = "0"
+label_settings = SubResource("LabelSettings_eqbpn")
+horizontal_alignment = 1
+
+[node name="MrFreshSelector" type="Button" parent="selectorbg"]
+layout_mode = 0
+offset_left = 126.0
+offset_top = 17.0
+offset_right = 554.0
+offset_bottom = 445.0
+scale = Vector2(0.234, 0.234)
+icon = ExtResource("4_5lcyj")
+icon_alignment = 1
+
+[node name="counter" type="Label" parent="selectorbg/MrFreshSelector"]
+layout_mode = 0
+offset_left = 269.23077
+offset_top = 316.23923
+offset_right = 347.23077
+offset_bottom = 369.23923
+scale = Vector2(2.25, 2.25)
+text = "0"
+label_settings = SubResource("LabelSettings_eqbpn")
+horizontal_alignment = 1
+
+[node name="tryitbtn" type="Button" parent="selectorbg"]
+layout_mode = 0
+offset_left = 1748.0
+offset_top = 17.000061
+offset_right = 1800.0
+offset_bottom = 50.333435
+scale = Vector2(3, 3)
+text = "Try It"
+
+[node name="BackToMenu" type="Button" parent="selectorbg"]
+layout_mode = 0
+offset_left = 1388.0
+offset_top = 17.000061
+offset_right = 1505.0
+offset_bottom = 50.333557
+scale = Vector2(3, 3)
+text = "Back To Menu"
+
+[node name="Settings" type="Button" parent="selectorbg"]
+layout_mode = 0
+offset_left = 1158.0
+offset_top = 17.000061
+offset_right = 1232.0
+offset_bottom = 50.333557
+scale = Vector2(3, 3)
+text = "Settings
+"
 
 [node name="settingspopup" type="ColorRect" parent="."]
 visible = false
@@ -229,6 +318,43 @@ offset_bottom = 206.0
 placeholder_text = "Your Popup Text Here"
 max_length = 40
 
+[node name="deletestagepopup" type="ColorRect" parent="."]
+visible = false
+offset_left = 646.0
+offset_top = 327.0
+offset_right = 1286.0
+offset_bottom = 738.0
+color = Color(0.34407577, 0.34407574, 0.34407574, 1)
+
+[node name="Label" type="Label" parent="deletestagepopup"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 91.0
+offset_right = 610.0
+offset_bottom = 184.0
+text = "Are you sure you want to delete
+the current stage? (You can't go back!)"
+label_settings = SubResource("LabelSettings_5lcyj")
+horizontal_alignment = 1
+
+[node name="yesbtn" type="Button" parent="deletestagepopup"]
+layout_mode = 0
+offset_left = 118.0
+offset_top = 222.0
+offset_right = 167.0
+offset_bottom = 253.0
+scale = Vector2(3, 3)
+text = "Yes"
+
+[node name="nobtn" type="Button" parent="deletestagepopup"]
+layout_mode = 0
+offset_left = 343.0
+offset_top = 222.0
+offset_right = 392.0
+offset_bottom = 253.0
+scale = Vector2(3, 3)
+text = "No"
+
 [node name="editmusicpopup" type="ColorRect" parent="."]
 visible = false
 offset_left = 646.0
@@ -357,90 +483,6 @@ offset_right = 361.0
 offset_bottom = 116.0
 text = "Enabled"
 
-[node name="wawa" type="TextureButton" parent="."]
-visible = false
-offset_left = 933.0
-offset_top = 409.0
-offset_right = 1076.0
-offset_bottom = 601.0
-scale = Vector2(0.6, 0.5)
-texture_normal = ExtResource("1_b1cmn")
-script = ExtResource("3_eqbpn")
-
-[node name="mrfresh" type="TextureButton" parent="."]
-visible = false
-offset_left = 933.0
-offset_top = 409.0
-offset_right = 1076.0
-offset_bottom = 601.0
-scale = Vector2(0.25, 0.25)
-texture_normal = ExtResource("4_5lcyj")
-script = ExtResource("5_5tm2q")
-
-[node name="WawaSelector" type="Button" parent="."]
-offset_left = 17.0
-offset_top = 963.0
-offset_right = 217.0
-offset_bottom = 1163.0
-scale = Vector2(0.5, 0.5)
-icon = ExtResource("1_b1cmn")
-icon_alignment = 1
-
-[node name="counter" type="Label" parent="WawaSelector"]
-layout_mode = 0
-offset_left = 120.0
-offset_top = 148.0
-offset_right = 198.0
-offset_bottom = 201.0
-text = "0"
-label_settings = SubResource("LabelSettings_eqbpn")
-horizontal_alignment = 1
-
-[node name="MrFreshSelector" type="Button" parent="."]
-offset_left = 126.0
-offset_top = 963.0
-offset_right = 554.0
-offset_bottom = 1391.0
-scale = Vector2(0.234, 0.234)
-icon = ExtResource("4_5lcyj")
-icon_alignment = 1
-
-[node name="counter" type="Label" parent="MrFreshSelector"]
-layout_mode = 0
-offset_left = 269.23077
-offset_top = 316.23923
-offset_right = 347.23077
-offset_bottom = 369.23923
-scale = Vector2(2.25, 2.25)
-text = "0"
-label_settings = SubResource("LabelSettings_eqbpn")
-horizontal_alignment = 1
-
-[node name="tryitbtn" type="Button" parent="."]
-offset_left = 1748.0
-offset_top = 963.00006
-offset_right = 1800.0
-offset_bottom = 996.33344
-scale = Vector2(3, 3)
-text = "Try It"
-
-[node name="BackToMenu" type="Button" parent="."]
-offset_left = 1388.0
-offset_top = 963.00006
-offset_right = 1505.0
-offset_bottom = 996.33356
-scale = Vector2(3, 3)
-text = "Back To Menu"
-
-[node name="Settings" type="Button" parent="."]
-offset_left = 1158.0
-offset_top = 963.00006
-offset_right = 1232.0
-offset_bottom = 996.33356
-scale = Vector2(3, 3)
-text = "Settings
-"
-
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_xg7d5")
 autoplay = true
@@ -466,6 +508,13 @@ color = Color(0, 0, 0, 1)
 
 [connection signal="gui_input" from="bg" to="." method="_on_bg_gui_input"]
 [connection signal="pressed" from="counterhitbox" to="." method="_on_counterhitbox_pressed"]
+[connection signal="gui_input" from="wawa" to="wawa" method="_on_gui_input"]
+[connection signal="gui_input" from="mrfresh" to="mrfresh" method="_on_gui_input"]
+[connection signal="focus_entered" from="selectorbg/WawaSelector" to="." method="_on_wawa_selector_focus_entered"]
+[connection signal="pressed" from="selectorbg/MrFreshSelector" to="." method="_on_mr_fresh_selector_pressed"]
+[connection signal="pressed" from="selectorbg/tryitbtn" to="." method="_on_tryitbtn_pressed"]
+[connection signal="pressed" from="selectorbg/BackToMenu" to="." method="_on_back_to_menu_pressed"]
+[connection signal="pressed" from="selectorbg/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="settingspopup/donebtn" to="." method="_on_settings_donebtn_pressed"]
 [connection signal="pressed" from="settingspopup/EditPopup" to="." method="_on_edit_popup_pressed"]
 [connection signal="pressed" from="settingspopup/DeleteStage" to="." method="_on_delete_stage_pressed"]
@@ -477,14 +526,9 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="countereditpopup/digit2/subbtn" to="." method="_on_digit2_subbtn_pressed"]
 [connection signal="pressed" from="countereditpopup/donebtn" to="." method="_on_donebtn_pressed"]
 [connection signal="pressed" from="editpopuppopup/donebtn" to="." method="_on_editpopup_donebtn_pressed"]
+[connection signal="pressed" from="deletestagepopup/yesbtn" to="." method="_on_deletestage_yesbtn_pressed"]
+[connection signal="pressed" from="deletestagepopup/nobtn" to="." method="_on_deletestage_nobtn_pressed"]
 [connection signal="pressed" from="editmusicpopup/donebtn" to="." method="_on_editmusic_donebtn_pressed"]
 [connection signal="pressed" from="editmusicpopup/playbtn" to="." method="_on_editmusic_playbtn_pressed"]
 [connection signal="pressed" from="editlightspopup/donebtn" to="." method="_on_editlights_donebtn_pressed"]
 [connection signal="pressed" from="editlightspopup/Enabled" to="." method="_on_editlights_enabled_pressed"]
-[connection signal="gui_input" from="wawa" to="wawa" method="_on_gui_input"]
-[connection signal="gui_input" from="mrfresh" to="mrfresh" method="_on_gui_input"]
-[connection signal="focus_entered" from="WawaSelector" to="." method="_on_wawa_selector_focus_entered"]
-[connection signal="pressed" from="MrFreshSelector" to="." method="_on_mr_fresh_selector_pressed"]
-[connection signal="pressed" from="tryitbtn" to="." method="_on_tryitbtn_pressed"]
-[connection signal="pressed" from="BackToMenu" to="." method="_on_back_to_menu_pressed"]
-[connection signal="pressed" from="Settings" to="." method="_on_settings_pressed"]
