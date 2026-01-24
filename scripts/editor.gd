@@ -119,7 +119,6 @@ var mrfreshcount = 0
 func _ready() -> void:
 	if loadcontent():
 		loadedcontent = loadcontent()
-	DirAccess.make_dir_absolute("user://customstages")
 	$countereditpopup.visible = false
 	$editpopuppopup.visible = false
 	$blackbg.visible = true
@@ -439,7 +438,7 @@ func _on_editmusic_playbtn_pressed() -> void:
 	prevmusictime = $AudioStreamPlayer2D.get_playback_position()
 	$AudioStreamPlayer2D.stop()
 	if $editmusicpopup/LineEdit.text.begins_with("res://"):
-		$AudioStreamPlayer2D.stream = load($editmusicpopup/LineEdit.text)
+		$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_file($editmusicpopup/LineEdit.text)
 	else:
 		$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_file($editmusicpopup/LineEdit.text)
 	$AudioStreamPlayer2D.play()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dwnaww5p7nnv0"]
+[gd_scene load_steps=17 format=3 uid="uid://dwnaww5p7nnv0"]
 
 [ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="1_b1cmn"]
 [ext_resource type="Script" uid="uid://dyfm5u32b7deo" path="res://scripts/editor.gd" id="1_pxqd5"]
@@ -22,6 +22,9 @@ font_size = 32
 
 [sub_resource type="LabelSettings" id="LabelSettings_q68jb"]
 font_size = 128
+
+[sub_resource type="LabelSettings" id="LabelSettings_j8y2p"]
+font_size = 48
 
 [sub_resource type="LabelSettings" id="LabelSettings_5lcyj"]
 font_size = 32
@@ -298,7 +301,7 @@ offset_top = 11.0
 offset_right = 583.0
 offset_bottom = 78.0
 text = "Enter the popup's text."
-label_settings = SubResource("LabelSettings_5lcyj")
+label_settings = SubResource("LabelSettings_j8y2p")
 
 [node name="donebtn" type="Button" parent="editpopuppopup"]
 layout_mode = 0

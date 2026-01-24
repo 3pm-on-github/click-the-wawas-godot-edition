@@ -1,7 +1,28 @@
 extends Node2D
 
+func get_file_list(path: String) -> Array:
+	var files := []
+	var dir := DirAccess.open(path)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if not dir.current_is_dir():
+				files.append(path + "/" + file_name)
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_error("Cannot open folder: " + path)
+	return files
+
+func load_and_return_popuptext(path):
+	var src: PackedByteArray = FileAccess.get_file_as_bytes(path)
+	return JSON.parse_string(src.get_string_from_utf8()).popup_text
+
 var movement = true
+var elementfilepaths = {}
 func _ready() -> void:
+	DirAccess.make_dir_absolute("user://customstages")
 	$bg.modulate.a = 0.0
 	$blackbg.visible = false
 	$blackbg.modulate.a = 0.0
@@ -17,6 +38,20 @@ func _ready() -> void:
 	$mainmenu/exitbtn.position = Vector2(-403, 867)
 	$solomenu.visible = false
 	$solomenu.modulate.a = 0.0
+	
+	var lastpos = $solomenu/classicstagesbtn.position.y
+	# get custom stages
+	for file in get_file_list("user://customstages"):
+		var copy: Button = $solomenu/customstagebtn.duplicate(1)
+		copy.text = load_and_return_popuptext(file)
+		copy.position.y = lastpos + 90
+		copy.visible = true
+		copy.set_script($solomenu/customstagebtn.get_script())
+		if copy.has_signal("got_pressed"):
+			copy.got_pressed.connect(_on_customstagebtn_pressed)
+		elementfilepaths[copy] = file
+		lastpos = copy.position.y
+		$solomenu/customstagebtn.get_parent().add_child(copy)
 	
 	DiscordRPC.state = "in the menu"
 	DiscordRPC.refresh()
@@ -179,3 +214,14 @@ func _on_classicstagesbtn_pressed() -> void:
 		$blackbg.modulate.a += 0.0125
 		await get_tree().create_timer(0.0125).timeout
 	get_tree().change_scene_to_file("res://scenes/stages/stage1.tscn")
+
+func _on_customstagebtn_pressed(element) -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/editortry.ogg")
+	$AudioStreamPlayer2D2.play()
+	$blackbg.visible = true
+	for i in range(80):
+		$AudioStreamPlayer2D.volume_db -= 1
+		$blackbg.modulate.a += 0.0125
+		await get_tree().create_timer(0.0125).timeout
+	Global.customstagetotry = elementfilepaths[element]
+	get_tree().change_scene_to_file("res://scenes/customstage.tscn")

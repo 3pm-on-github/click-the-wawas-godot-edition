@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://d35l55tdxc08w"]
+[gd_scene load_steps=21 format=3 uid="uid://d35l55tdxc08w"]
 
 [ext_resource type="Script" uid="uid://da5ag1b1cg5x2" path="res://scripts/menu.gd" id="1_vjb58"]
 [ext_resource type="AudioStream" uid="uid://brle1wunjefkc" path="res://audio/menumusic.mp3" id="3_mhnvy"]
@@ -15,7 +15,6 @@
 [ext_resource type="Texture2D" uid="uid://c0ovbqg0x3sxh" path="res://images/exitbtnhover.png" id="9_70i5f"]
 [ext_resource type="AudioStream" uid="uid://dym6wdf1fq22e" path="res://audio/hovering.wav" id="9_i6lef"]
 [ext_resource type="Texture2D" uid="uid://d1pndllsek5dr" path="res://images/multibtnhover.png" id="9_mxgkd"]
-[ext_resource type="Script" uid="uid://chaw6ey0cxmjc" path="res://scripts/customstagebtn.gd" id="16_mxgkd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4ytvr"]
 font_size = 115
@@ -178,14 +177,12 @@ scale = Vector2(2.5, 2.5)
 text = "classic stages"
 
 [node name="customstagebtn" type="Button" parent="solomenu"]
-visible = false
-offset_left = 17.0
-offset_top = 116.0
-offset_right = 129.0
-offset_bottom = 147.0
+offset_left = 18.99988
+offset_top = 116.00003
+offset_right = 130.99988
+offset_bottom = 147.00003
 scale = Vector2(2.5, 2.5)
 text = "custom stage"
-script = ExtResource("16_mxgkd")
 
 [node name="blackbg" type="ColorRect" parent="."]
 visible = false
@@ -211,5 +208,4 @@ offset_bottom = 1017.0
 [connection signal="mouse_entered" from="mainmenu/exitbtn" to="." method="_on_exitbtn_mouse_entered"]
 [connection signal="pressed" from="mainmenu/exitbtn" to="." method="_on_exitbtn_pressed"]
 [connection signal="pressed" from="solomenu/classicstagesbtn" to="." method="_on_classicstagesbtn_pressed"]
-[connection signal="pressed" from="solomenu/customstagebtn" to="solomenu/customstagebtn" method="_on_pressed"]
 [connection signal="pressed" from="wawahitbox" to="." method="_on_wawahitbox_pressed"]

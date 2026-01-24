@@ -211,5 +211,4 @@ offset_bottom = 1017.0
 [connection signal="mouse_entered" from="mainmenu/exitbtn" to="." method="_on_exitbtn_mouse_entered"]
 [connection signal="pressed" from="mainmenu/exitbtn" to="." method="_on_exitbtn_pressed"]
 [connection signal="pressed" from="solomenu/classicstagesbtn" to="." method="_on_classicstagesbtn_pressed"]
-[connection signal="pressed" from="solomenu/customstagebtn" to="solomenu/customstagebtn" method="_on_pressed"]
 [connection signal="pressed" from="wawahitbox" to="." method="_on_wawahitbox_pressed"]
