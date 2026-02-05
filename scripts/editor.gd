@@ -4,6 +4,11 @@ func _process(_delta: float) -> void:
 
 var focus = ""
 var elements = []
+var next_beat_time = 0
+var beat_index = 0
+var beat_tween : Tween = null
+var beat1 = preload("res://audio/beat1.mp3")
+var beat2 = preload("res://audio/beat2.mp3")
 @onready var audioblur := AudioServer.get_bus_effect(
 	AudioServer.get_bus_index("Master"), 2
 ) as AudioEffectLowPassFilter
@@ -23,13 +28,38 @@ func load_from_file(path):
 	var content = FileAccess.get_file_as_bytes(path)
 	return content
 
-func load_and_returnb64(path):
+func copy_res_to_user(res_path: String, user_path: String) -> bool:
+	if not FileAccess.file_exists(res_path):
+		push_error("Source missing: " + res_path)
+		return false
+	var data := FileAccess.get_file_as_bytes(res_path)
+	if data.is_empty():
+		push_error("Source empty or not packed: " + res_path)
+		return false
+	DirAccess.make_dir_recursive_absolute(user_path.get_base_dir())
+	var f := FileAccess.open(user_path, FileAccess.WRITE)
+	if f == null:
+		push_error("Failed to open destination: " + user_path)
+		return false
+	f.store_buffer(data)
+	f.close()
+	return true
+
+func load_and_returnb64(path: String):
 	var content = FileAccess.get_file_as_bytes(path)
 	return Marshalls.raw_to_base64(content)
 
 func returnsha256(data: Dictionary) -> String:
 	var json_string := JSON.stringify(data)
 	var bytes: PackedByteArray = json_string.to_utf8_buffer()
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update(bytes)
+	var hashed: PackedByteArray = ctx.finish()
+	return hashed.hex_encode()
+	
+func returnsha256str(data: String) -> String:
+	var bytes: PackedByteArray = data.to_utf8_buffer()
 	var ctx := HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)
 	ctx.update(bytes)
@@ -60,34 +90,19 @@ func _read_u24(src: PackedByteArray, i: int) -> int:
 func _read_u16(src: PackedByteArray, i: int) -> int:
 	return (src[i] << 8) | src[i + 1]
 
-# storage method:
-# u8    counter
-# bytes popup_text
-# u8    0x00
-# u16   lights_bpm (0 if disabled)
-# u24   lights_startpos (starttime*1000)
-# lights_rgb:
-#     u8   lights_red
-#     u8   lights_green
-#     u8   lights_blue
-#     u8   lights_alpha
-# u32   music_b64_length (big-endian)
-# bytes music_b64 (UTF-8)
-# repeat:
-#     u8   packed id/x/y high bits
-#     u8   x low
-#     u8   y low
-#     u8   flags
-
 var finalpath = ""
+var stageid = ""
 func save():
 	var out := {}
+	out['version'] = 1
 	out['counter'] = digit1*10+digit2
 	out['popup_text'] = popuptext
+	out['author'] = authorname
 	out['lights_bpm'] = 0 if not lightsenabled else lightsbpm
 	out['lights_startpos'] = lightsstarttime*1000
 	out['lights_rgb'] = [lightsrgb.r8, lightsrgb.g8, lightsrgb.b8, lightsrgb.a8]
 	out['music_encodeddata'] = load_and_returnb64(musicpath)
+	out['music_path_sha256'] = returnsha256str(musicpath)
 	out['elements'] = []
 	for element in elements:
 		var id = element.elementid
@@ -100,28 +115,61 @@ func save():
 		assert(flags >= 0)
 		out["elements"].append({"id": id, "x": x, "y": y, "flags": flags})
 	finalpath = "user://customstages/"+returnsha256(out)+".ctw"
+	stageid = returnsha256(out)
 	save_to_file(JSON.stringify(out), finalpath)
+
+func savemusicpath(musicpath: String):
+	var out = loadedmusicpaths
+	out[returnsha256str(musicpath)] = musicpath
+	save_to_file(JSON.stringify(out), "user://savedmusicpaths.json")
+	loadedmusicpaths = out
 
 func loadcontent():
 	var src: PackedByteArray = load_from_file(Global.customstagetotry)
+	if src.get_string_from_utf8() == "": return
+	return JSON.parse_string(src.get_string_from_utf8())
+
+func loadmusicpaths():
+	var src: PackedByteArray = load_from_file("user://savedmusicpaths.json")
+	if src.get_string_from_utf8() == "": return
 	return JSON.parse_string(src.get_string_from_utf8())
 
 var loadedcontent = {
+	"version": 1,
 	"counter": 30,
 	"popup_text": "Default",
-	"lights_bpm": 0,
-	"lights_startpos": 0,
+	"lights_bpm": 120.0,
+	"lights_startpos": 0.0,
 	"lights_rgb": [144, 255, 255, 255],
+	"music_path_sha256": "dd9db6c2ec014e37defe49a42f80a7f1e556f283d166cfb0835dda6e6fd63f41",
 	"elements": []
 }
+var loadedmusicpaths = {}
 var wawacount = 0
 var mrfreshcount = 0
 func _ready() -> void:
+	copy_res_to_user("res://audio/customstagemusic.mp3", "user://customstagemusic.mp3")
+	dontrunthebpmpreview = true
 	if loadcontent():
 		loadedcontent = loadcontent()
+	if loadmusicpaths():
+		loadedmusicpaths = loadmusicpaths()
+		if loadedcontent.music_path_sha256 in loadedmusicpaths:
+			musicpath = loadedmusicpaths[loadedcontent.music_path_sha256]
+		else:
+			print("Error: Music Path not found in Music Path List. :(")
+	lightsbpm = loadedcontent.lights_bpm
+	lightsstarttime = loadedcontent.lights_startpos/1000
+	lightsrgb = Color.from_rgba8(loadedcontent.lights_rgb[0], loadedcontent.lights_rgb[1], loadedcontent.lights_rgb[2], loadedcontent.lights_rgb[3])
+	$editlightspopup/BPM.value = lightsbpm
+	$editlightspopup/StartTime.value = lightsstarttime
+	$editlightspopup/ColorPickerButton.color = lightsrgb
 	$countereditpopup.visible = false
 	$editpopuppopup.visible = false
+	$editauthorpopup.visible = false
 	$blackbg.visible = true
+	$selectorbg/uploading.visible = false
+	dontrunthebpmpreview = false
 	if len(str(loadedcontent.counter)) == 1:
 		digit1 = 0
 		digit2 = int(str(loadedcontent.counter)[0])
@@ -230,6 +278,7 @@ func _on_donebtn_pressed() -> void:
 func _on_bg_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		if focus == "Wawa":
+			$AudioStreamPlayer2D2.stream = load("res://audio/clickfast.ogg")
 			$AudioStreamPlayer2D2.play()
 			var copy = $wawa.duplicate()
 			copy.position = Vector2(event.position.x-35.75, event.position.y-48)
@@ -246,6 +295,7 @@ func _on_bg_gui_input(event: InputEvent) -> void:
 			$wawa.get_parent().add_child(copy)
 			$selectorbg/WawaSelector/counter.text = str(wawacount)
 		elif focus == "Mr Fresh":
+			$AudioStreamPlayer2D2.stream = load("res://audio/clickfast.ogg")
 			$AudioStreamPlayer2D2.play()
 			var copy = $mrfresh.duplicate()
 			copy.position = Vector2(event.position.x-35.75, event.position.y-48)
@@ -263,6 +313,10 @@ func _on_bg_gui_input(event: InputEvent) -> void:
 			$selectorbg/MrFreshSelector/counter.text = str(mrfreshcount)
 
 func _on_tryitbtn_pressed() -> void:
+	if len(elements) == 0:
+		$AudioStreamPlayer2D3.stream = load("res://audio/editordelete.mp3")
+		$AudioStreamPlayer2D3.play()
+		return
 	save()
 	Global.customstagetotry = finalpath
 	focus = ""
@@ -300,8 +354,27 @@ func _on_editpopup_donebtn_pressed() -> void:
 	DiscordRPC.state = "editing a stage ("+popuptext+")"
 	DiscordRPC.refresh()
 
+var authorname = "Wawa Clicker"
+func _on_edit_author_pressed() -> void:
+	$settingspopup.visible = false
+	$editauthorpopup/LineEdit.text = authorname
+	$editauthorpopup.visible = true
+	for element in elements:
+		element.visible = false
+	focus = ""
+
+func _on_editauthor_donebtn_pressed() -> void:
+	focus = ""
+	authorname = $editauthorpopup/LineEdit.text
+	if authorname == "":
+		authorname = "Wawa Clicker"
+	$editauthorpopup.visible = false
+	for element in elements:
+		element.visible = true
+	
 func _on_back_to_menu_pressed() -> void:
-	save()
+	if len(elements) != 0:
+		save()
 	focus = ""
 	$blackbg.visible = true
 	$AudioStreamPlayer2D3.stream = load("res://audio/editortry.ogg")
@@ -337,7 +410,7 @@ func _on_deletestage_yesbtn_pressed() -> void:
 	for element in elements:
 		element.queue_free()
 	elements = []
-	musicpath = "res://audio/customstagemusic.mp3"
+	musicpath = "user://customstagemusic.mp3"
 	popuptext = "Default"
 	digit1 = 3
 	digit2 = 0
@@ -406,22 +479,28 @@ func _on_settings_donebtn_pressed() -> void:
 		element.visible = true
 	focus = ""
 
-var musicpath = "res://audio/customstagemusic.mp3"
+var musicpath = "user://customstagemusic.mp3"
 func _on_edit_music_pressed() -> void:
 	$settingspopup.visible = false
-	$editmusicpopup/LineEdit.text = musicpath
+	$editmusicpopup/changebtn.text = musicpath.get_file()
 	$editmusicpopup.visible = true
 	prevmusictime = null
 	for element in elements:
 		element.visible = false
 	focus = ""
-	
+
+func _on_editmusic_changebtn_pressed() -> void:
+	$editmusicpopup/FileDialog.visible = true
+
+func _on_editmusic_file_dialog_file_selected(path: String) -> void:
+	musicpath = path
+	$editmusicpopup/changebtn.text = musicpath.get_file()
+
 func _on_editmusic_donebtn_pressed() -> void:
-	if not $editmusicpopup/LineEdit.text.ends_with(".mp3"):
+	if not musicpath.ends_with(".mp3"):
 		return
-	musicpath = $editmusicpopup/LineEdit.text
 	if musicpath == "":
-		musicpath = "res://audio/customstagemusic.mp3"
+		musicpath = "user://customstagemusic.mp3"
 	$editmusicpopup.visible = false
 	for element in elements:
 		element.visible = true
@@ -430,41 +509,162 @@ func _on_editmusic_donebtn_pressed() -> void:
 		$AudioStreamPlayer2D.stream = load("res://audio/editorost.mp3")
 		$AudioStreamPlayer2D.play(prevmusictime)
 	focus = ""
+	if not returnsha256str(musicpath) in loadedmusicpaths:
+		savemusicpath(musicpath)
 
 var prevmusictime = null
 func _on_editmusic_playbtn_pressed() -> void:
-	if not $editmusicpopup/LineEdit.text.ends_with(".mp3"):
-		return
 	prevmusictime = $AudioStreamPlayer2D.get_playback_position()
 	$AudioStreamPlayer2D.stop()
-	if $editmusicpopup/LineEdit.text.begins_with("res://"):
-		$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_file($editmusicpopup/LineEdit.text)
+	if musicpath.begins_with("res://"):
+		$AudioStreamPlayer2D.stream = load(musicpath)
 	else:
-		$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_file($editmusicpopup/LineEdit.text)
+		$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_file(musicpath)
 	$AudioStreamPlayer2D.play()
 
 func _on_edit_lights_pressed() -> void:
 	$settingspopup.visible = false
 	$editlightspopup.visible = true
-	$editlightspopup/BPM.value = lightsbpm
-	$editlightspopup/StartTime.value = lightsstarttime
-	$editlightspopup/ColorPickerButton.color = lightsrgb
 	for element in elements:
 		element.visible = false
 	focus = ""
 
-var lightsbpm = loadedcontent.lights_bpm
-var lightsstarttime = loadedcontent.lights_startpos
-var lightsrgb = Color.from_rgba8(loadedcontent.lights_rgb[0], loadedcontent.lights_rgb[1], loadedcontent.lights_rgb[2], loadedcontent.lights_rgb[3])
+var lightsbpm = 120.0
+var lightsstarttime = 0.0
+var lightsrgb = Color.from_rgba8(144, 255, 255, 255)
 var lightsenabled = false
 func _on_editlights_donebtn_pressed() -> void:
 	$editlightspopup.visible = false
+	$editlightspopup/bpmfinder.visible = false
+	alreadystartedbpmpreview = false
 	lightsbpm = $editlightspopup/BPM.value
 	lightsstarttime = $editlightspopup/StartTime.value
 	lightsrgb = $editlightspopup/ColorPickerButton.color
+	if prevmusictime != null:
+		$AudioStreamPlayer2D.stop()
+		$AudioStreamPlayer2D.stream = load("res://audio/editorost.mp3")
+		$AudioStreamPlayer2D.play(prevmusictime)
 	for element in elements:
 		element.visible = true
 	focus = ""
 
 func _on_editlights_enabled_pressed() -> void:
 	lightsenabled = not lightsenabled
+
+var alreadystartedbpmpreview = false
+var dontrunthebpmpreview = false
+func _on_bpm_value_changed(value: float) -> void:
+	$editlightspopup/bpmfinder.visible = true
+	lightsbpm = value
+	if (not alreadystartedbpmpreview) and (not dontrunthebpmpreview):
+		start_bpm_preview()
+	else:
+		next_beat_time = Time.get_ticks_usec()
+		beat_index = 0
+
+func start_bpm_preview():
+	alreadystartedbpmpreview = true
+	prevmusictime = $AudioStreamPlayer2D.get_playback_position()
+	$AudioStreamPlayer2D.stop()
+	if musicpath.begins_with("res://"):
+		$AudioStreamPlayer2D.stream = load(musicpath)
+	else:
+		$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_file(musicpath)
+	$AudioStreamPlayer2D.play(lightsstarttime)
+	next_beat_time = Time.get_ticks_usec()
+	beat_index = 0
+	run_beat_loop()
+
+func run_beat_loop():
+	while alreadystartedbpmpreview:
+		var now = Time.get_ticks_usec()
+		var beat_interval = 60.0 / lightsbpm * 1_000_000.0
+		if now >= next_beat_time:
+			play_beat()
+			next_beat_time += beat_interval
+		await get_tree().process_frame
+
+func play_beat():
+	beat_index += 1
+	if beat_index % 4 == 0:
+		$AudioStreamPlayer2D2.stream = beat1
+	else:
+		$AudioStreamPlayer2D2.stream = beat2
+	$AudioStreamPlayer2D2.play()
+	$editlightspopup/bpmfinder.modulate = $editlightspopup/ColorPickerButton.color
+	if beat_tween:
+		beat_tween.kill()
+	var beat_interval = 60.0 / lightsbpm
+	beat_tween = get_tree().create_tween()
+
+	beat_tween.tween_property(
+		$editlightspopup/bpmfinder,
+		"modulate",
+		Color.from_rgba8(255, 255, 255, 255),
+		beat_interval
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+var tap_times = []
+const MAX_TAPS = 6
+func _on_bpmfinder_pressed() -> void:
+	var now = Time.get_ticks_usec()
+	tap_times.append(now)
+	if tap_times.size() > MAX_TAPS:
+		tap_times.pop_front()
+	if tap_times.size() < 2:
+		return
+	var total_interval = 0.0
+	for i in range(1, tap_times.size()):
+		total_interval += (tap_times[i] - tap_times[i - 1])
+	var avg_interval_sec = (total_interval / (tap_times.size() - 1)) / 1_000_000.0
+	var bpm = snapped(60.0 / avg_interval_sec, 0.1)
+	$editlightspopup/bpmfinder.text = str(bpm) + "bpm"
+	lightsbpm = bpm
+	$editlightspopup/BPM.value = lightsbpm
+
+func _on_upload_pressed() -> void:
+	if len(elements) == 0:
+		$AudioStreamPlayer2D3.stream = load("res://audio/editordelete.mp3")
+		$AudioStreamPlayer2D3.play()
+		return
+	save()
+	$AudioStreamPlayer2D2.stream = load("res://audio/uploading.mp3")
+	$AudioStreamPlayer2D2.play()
+	$selectorbg/uploading.text = "uploading..."
+	$selectorbg/uploading.modulate.a = 0.0
+	$selectorbg/uploading.visible = true
+	for i in range(13):
+		$selectorbg/uploading.modulate.a += 0.08
+		await get_tree().create_timer(0.01).timeout
+	var url = "http://ctw.threepm.xyz/api/v1/uploadstage/" + stageid + ".ctw"
+	var httpreq = HTTPRequest.new()
+	add_child(httpreq)
+	var bytes = load_from_file("user://customstages/" + stageid + ".ctw")
+	var body = bytes.get_string_from_utf8()
+	var headers = PackedStringArray([
+	    "Content-Type: text/plain; charset=utf-8"
+	])
+	var err = httpreq.request(url, headers, HTTPClient.Method.METHOD_POST, body)
+	if err != OK:
+		print("Request failed to start: ", err)
+		return
+	var result = await httpreq.request_completed
+	var response_code = result[1]
+	var response_bytes : PackedByteArray = result[3]
+	var response_text = response_bytes.get_string_from_utf8()
+	if response_code != 200:
+		print("HTTP Error: ", response_code)
+		print("Server Response: ", response_text)
+		$selectorbg/uploading.text = "failed.."
+		$AudioStreamPlayer2D2.stream = load("res://audio/uploadfailed.mp3")
+	else:
+		print("Upload successful! Server Response: ", response_text)
+		$selectorbg/uploading.text = "uploaded!"
+		$AudioStreamPlayer2D2.stream = load("res://audio/uploaded.mp3")
+	$AudioStreamPlayer2D2.play()
+	await get_tree().create_timer(1).timeout
+	for i in range(13):
+		$selectorbg/uploading.modulate.a -= 0.08
+		await get_tree().create_timer(0.01).timeout
+	$selectorbg/uploading.modulate.a = 0.0
+	$selectorbg/uploading.visible = false

@@ -252,7 +252,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="onlinecustomstage" type="ColorRect" parent="onlinestagesmenu/ScrollContainer/Control"]
-visible = false
 custom_minimum_size = Vector2(768, 241)
 layout_mode = 2
 color = Color(0.45882353, 0.45882353, 0.45882353, 1)

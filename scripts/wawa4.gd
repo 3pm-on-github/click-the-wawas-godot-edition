@@ -13,7 +13,7 @@ func _ready() -> void:
 			tween.tween_property(self, "position", Vector2(randi_range(0,1834), 272), randtime).set_trans(Tween.TRANS_SINE)
 			await get_tree().create_timer(randtime).timeout
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 var alreadyshot = false

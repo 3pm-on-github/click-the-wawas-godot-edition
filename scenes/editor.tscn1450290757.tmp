@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dwnaww5p7nnv0"]
+[gd_scene load_steps=17 format=3 uid="uid://dwnaww5p7nnv0"]
 
 [ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="1_b1cmn"]
 [ext_resource type="Script" uid="uid://dyfm5u32b7deo" path="res://scripts/editor.gd" id="1_pxqd5"]
@@ -17,16 +17,13 @@ font_size = 38
 outline_size = 10
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_o435n"]
-font_size = 64
-
 [sub_resource type="LabelSettings" id="LabelSettings_xg7d5"]
 font_size = 32
 
 [sub_resource type="LabelSettings" id="LabelSettings_q68jb"]
 font_size = 128
 
-[sub_resource type="LabelSettings" id="LabelSettings_3vi5u"]
+[sub_resource type="LabelSettings" id="LabelSettings_j8y2p"]
 font_size = 48
 
 [sub_resource type="LabelSettings" id="LabelSettings_5lcyj"]
@@ -37,9 +34,6 @@ font_size = 40
 
 [sub_resource type="LabelSettings" id="LabelSettings_5tm2q"]
 font_size = 32
-
-[sub_resource type="LabelSettings" id="LabelSettings_j8y2p"]
-font_size = 24
 
 [node name="editor" type="Node2D"]
 script = ExtResource("1_pxqd5")
@@ -153,34 +147,15 @@ offset_bottom = 50.333557
 scale = Vector2(3, 3)
 text = "Back To Menu"
 
-[node name="Upload" type="Button" parent="selectorbg"]
-layout_mode = 0
-offset_left = 1190.0
-offset_top = 17.0
-offset_right = 1254.0
-offset_bottom = 50.333496
-scale = Vector2(3, 3)
-text = "Upload"
-
 [node name="Settings" type="Button" parent="selectorbg"]
 layout_mode = 0
-offset_left = 963.00006
-offset_top = 17.0
-offset_right = 1037.0
-offset_bottom = 50.333496
+offset_left = 1158.0
+offset_top = 17.000061
+offset_right = 1232.0
+offset_bottom = 50.333557
 scale = Vector2(3, 3)
 text = "Settings
 "
-
-[node name="uploading" type="Label" parent="selectorbg"]
-visible = false
-layout_mode = 0
-offset_left = 594.0
-offset_top = 23.0
-offset_right = 955.0
-offset_bottom = 111.0
-text = "uploading..."
-label_settings = SubResource("LabelSettings_o435n")
 
 [node name="settingspopup" type="ColorRect" parent="."]
 visible = false
@@ -234,15 +209,6 @@ offset_right = 105.0
 offset_bottom = 124.333374
 scale = Vector2(2, 2)
 text = "Edit Lights"
-
-[node name="EditAuthor" type="Button" parent="settingspopup"]
-layout_mode = 0
-offset_left = 207.0
-offset_top = 91.0
-offset_right = 303.0
-offset_bottom = 124.333374
-scale = Vector2(2, 2)
-text = "Edit Author"
 
 [node name="countereditpopup" type="ColorRect" parent="."]
 visible = false
@@ -335,7 +301,7 @@ offset_top = 11.0
 offset_right = 583.0
 offset_bottom = 78.0
 text = "Enter the popup's text."
-label_settings = SubResource("LabelSettings_3vi5u")
+label_settings = SubResource("LabelSettings_j8y2p")
 
 [node name="donebtn" type="Button" parent="editpopuppopup"]
 layout_mode = 0
@@ -453,7 +419,6 @@ file_mode = 0
 access = 2
 
 [node name="editlightspopup" type="ColorRect" parent="."]
-visible = false
 offset_left = 646.0
 offset_top = 327.0
 offset_right = 1286.0
@@ -490,7 +455,6 @@ edit_alpha = false
 edit_intensity = false
 
 [node name="bpmfinder" type="Button" parent="editlightspopup"]
-visible = false
 layout_mode = 0
 offset_left = 81.0
 offset_top = 233.0
@@ -507,7 +471,6 @@ offset_right = 264.5625
 offset_bottom = 276.0
 min_value = 1.0
 max_value = 1000.0
-step = 0.01
 value = 120.0
 
 [node name="BPMlabel" type="Label" parent="editlightspopup"]
@@ -545,45 +508,6 @@ offset_right = 361.0
 offset_bottom = 116.0
 text = "Enabled"
 
-[node name="editauthorpopup" type="ColorRect" parent="."]
-visible = false
-offset_left = 646.0
-offset_top = 327.0
-offset_right = 1286.0
-offset_bottom = 738.0
-color = Color(0.34407577, 0.34407574, 0.34407574, 1)
-
-[node name="Label" type="Label" parent="editauthorpopup"]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 7.0
-offset_right = 618.0
-offset_bottom = 144.0
-text = "Enter your username.
-Give yourself some credit!
-(This will be shown online if uploaded.
-Don't use your real name!)"
-label_settings = SubResource("LabelSettings_j8y2p")
-horizontal_alignment = 1
-
-[node name="donebtn" type="Button" parent="editauthorpopup"]
-layout_mode = 0
-offset_left = 232.0
-offset_top = 301.0
-offset_right = 281.0
-offset_bottom = 332.0
-scale = Vector2(3, 3)
-text = "Done"
-
-[node name="LineEdit" type="LineEdit" parent="editauthorpopup"]
-layout_mode = 0
-offset_left = 112.0
-offset_top = 191.73
-offset_right = 510.0
-offset_bottom = 238.73
-placeholder_text = "Your Username Here"
-max_length = 40
-
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_xg7d5")
 autoplay = true
@@ -617,14 +541,12 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="selectorbg/MrFreshSelector" to="." method="_on_mr_fresh_selector_pressed"]
 [connection signal="pressed" from="selectorbg/tryitbtn" to="." method="_on_tryitbtn_pressed"]
 [connection signal="pressed" from="selectorbg/BackToMenu" to="." method="_on_back_to_menu_pressed"]
-[connection signal="pressed" from="selectorbg/Upload" to="." method="_on_upload_pressed"]
 [connection signal="pressed" from="selectorbg/Settings" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="settingspopup/donebtn" to="." method="_on_settings_donebtn_pressed"]
 [connection signal="pressed" from="settingspopup/EditPopup" to="." method="_on_edit_popup_pressed"]
 [connection signal="pressed" from="settingspopup/DeleteStage" to="." method="_on_delete_stage_pressed"]
 [connection signal="pressed" from="settingspopup/EditMusic" to="." method="_on_edit_music_pressed"]
 [connection signal="pressed" from="settingspopup/EditLights" to="." method="_on_edit_lights_pressed"]
-[connection signal="pressed" from="settingspopup/EditAuthor" to="." method="_on_edit_author_pressed"]
 [connection signal="pressed" from="countereditpopup/digit1/addbtn" to="." method="_on_digit1_addbtn_pressed"]
 [connection signal="pressed" from="countereditpopup/digit1/subbtn" to="." method="_on_digit1_subbtn_pressed"]
 [connection signal="pressed" from="countereditpopup/digit2/addbtn" to="." method="_on_digit2_addbtn_pressed"]
@@ -641,4 +563,3 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="editlightspopup/bpmfinder" to="." method="_on_bpmfinder_pressed"]
 [connection signal="value_changed" from="editlightspopup/BPM" to="." method="_on_bpm_value_changed"]
 [connection signal="pressed" from="editlightspopup/Enabled" to="." method="_on_editlights_enabled_pressed"]
-[connection signal="pressed" from="editauthorpopup/donebtn" to="." method="_on_editauthor_donebtn_pressed"]

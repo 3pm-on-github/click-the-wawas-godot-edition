@@ -31,7 +31,7 @@ func _ready() -> void:
 	DiscordRPC.refresh()
 	$Label3.text = randommusic
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if !dothescale:
 		return
 	var energy = spectrum.get_magnitude_for_frequency_range(20, 150).length()

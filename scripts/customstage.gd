@@ -42,10 +42,9 @@ func _ready() -> void:
 
 func lights():
 	var toggle = false
-	while true:
+	while playing:
 		toggle = not toggle
-		if not playing:
-			break
+		var beat_duration = 60.0 / bpm
 		if toggle:
 			$lights/lightl1.visible = true
 			$lights/lightr1.visible = true
@@ -55,8 +54,8 @@ func lights():
 			$lights/lightr1.modulate.a = 1.0
 			var tween1 = get_tree().create_tween()
 			var tween2 = get_tree().create_tween()
-			tween1.tween_property($lights/lightl1, "modulate", Color.from_rgba8(255, 255, 255, 0), 1/(bpm/60))
-			tween2.tween_property($lights/lightr1, "modulate", Color.from_rgba8(255, 255, 255, 0), 1/(bpm/60))
+			tween1.tween_property($lights/lightl1, "modulate:a", 0.0, beat_duration)
+			tween2.tween_property($lights/lightr1, "modulate:a", 0.0, beat_duration)
 		else:
 			$lights/lightl1.visible = false
 			$lights/lightr1.visible = false
@@ -66,22 +65,32 @@ func lights():
 			$lights/lightr2.modulate.a = 1.0
 			var tween1 = get_tree().create_tween()
 			var tween2 = get_tree().create_tween()
-			tween1.tween_property($lights/lightl2, "modulate", Color.from_rgba8(255, 255, 255, 0), 1/(bpm/60))
-			tween2.tween_property($lights/lightr2, "modulate", Color.from_rgba8(255, 255, 255, 0), 1/(bpm/60))
-		await get_tree().create_timer(1/(bpm/60)).timeout
+			tween1.tween_property($lights/lightl2, "modulate:a", 0.0, beat_duration)
+			tween2.tween_property($lights/lightr2, "modulate:a", 0.0, beat_duration)
+		await get_tree().create_timer(beat_duration).timeout
 
 var elementskilled = 0
 func _on_element_clicked() -> void:
 	elementskilled+=1
 	if elementskilled == len(elements):
+		var calculatedtimetook = float(30-((loadedcontent.counter-counter) / loadedcontent.counter) * 30)
+		#var starrating = snapped(1.0+(0.15-(calculatedtimetook / 100)), 0.01)
+		var rating = 1.0
+		if "rating" in loadedcontent:
+			print("Boom")
+			rating = loadedcontent.rating
+		var starrating = snapped((rating+0.15)-calculatedtimetook/100, 0.01)
+		print("user's star rating: ", starrating)
 		await get_tree().create_timer(3).timeout
 		get_tree().change_scene_to_file("res://scenes/winscreen.tscn")
 
 var elements = []
 var playing = true
+var counter = 30
 func _on_ok_pressed() -> void:
 	DiscordRPC.state = "custom stage ("+loadedcontent.popup_text+")"
 	DiscordRPC.refresh()
+	counter = int(loadedcontent.counter)+1
 	$popup.visible = false
 	$counter.visible = true
 	$lights.visible = true
@@ -102,7 +111,6 @@ func _on_ok_pressed() -> void:
 			copy.mrfresh_clicked.connect(_on_element_clicked)
 			elements.append(copy)
 			$mrfresh.get_parent().add_child(copy)
-	var counter = int(loadedcontent.counter)+1
 	for i in range(counter):
 		$AudioStreamPlayer2D2.stream = load("res://audio/tick.wav")
 		$AudioStreamPlayer2D2.play()

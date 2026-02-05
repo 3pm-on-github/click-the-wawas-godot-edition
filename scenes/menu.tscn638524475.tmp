@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://d35l55tdxc08w"]
+[gd_scene load_steps=22 format=3 uid="uid://d35l55tdxc08w"]
 
 [ext_resource type="Script" uid="uid://da5ag1b1cg5x2" path="res://scripts/menu.gd" id="1_vjb58"]
 [ext_resource type="AudioStream" uid="uid://brle1wunjefkc" path="res://audio/menumusic.mp3" id="3_mhnvy"]
@@ -38,15 +38,6 @@ font_color = Color(0, 0, 0, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_g6gyw"]
 font_size = 32
 
-[sub_resource type="LabelSettings" id="LabelSettings_3dmrc"]
-font_size = 64
-
-[sub_resource type="LabelSettings" id="LabelSettings_81l6r"]
-font_size = 48
-
-[sub_resource type="LabelSettings" id="LabelSettings_rsfmq"]
-font_size = 48
-
 [node name="menu" type="Node2D"]
 script = ExtResource("1_vjb58")
 
@@ -60,6 +51,8 @@ stream = ExtResource("3_mhnvy")
 [node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("9_i6lef")
 volume_db = 6.0
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]
 
 [node name="mainmenu" type="Node2D" parent="."]
 visible = false
@@ -147,7 +140,6 @@ texture_normal = ExtResource("7_i6lef")
 texture_hover = ExtResource("9_70i5f")
 
 [node name="solomenu" type="Node2D" parent="."]
-visible = false
 
 [node name="title" type="Label" parent="solomenu"]
 offset_left = 1349.0
@@ -159,12 +151,25 @@ label_settings = SubResource("LabelSettings_7jp70")
 
 [node name="subtitle" type="Label" parent="solomenu/title"]
 layout_mode = 0
-offset_left = -15.0
 offset_top = 155.0
-offset_right = 736.0
+offset_right = 751.0
 offset_bottom = 247.99997
 text = "for clicking wawas alone"
 label_settings = SubResource("LabelSettings_mxgkd")
+
+[node name="wawabanner" type="ColorRect" parent="solomenu/title"]
+layout_mode = 0
+offset_top = 225.0
+offset_right = 560.0
+offset_bottom = 270.0
+color = Color(0.52906674, 0.5290667, 0.5290669, 1)
+
+[node name="Label" type="Label" parent="solomenu/title/wawabanner"]
+layout_mode = 0
+offset_right = 652.0
+offset_bottom = 45.0
+text = "wawawawawawawawawawawawawawaw"
+label_settings = SubResource("LabelSettings_g6gyw")
 
 [node name="classicstagesbtn" type="Button" parent="solomenu"]
 offset_left = 18.000002
@@ -172,7 +177,7 @@ offset_top = 23.00003
 offset_right = 130.0
 offset_bottom = 54.00003
 scale = Vector2(2.5, 2.5)
-text = "classic stages (0.88-1★)"
+text = "classic stages"
 
 [node name="onlinecustomstagesbtn" type="Button" parent="solomenu"]
 offset_left = 18.0
@@ -190,108 +195,6 @@ offset_right = 129.0
 offset_bottom = 147.0
 scale = Vector2(2.5, 2.5)
 text = "custom stage"
-script = ExtResource("16_mxgkd")
-
-[node name="goback" type="Button" parent="solomenu"]
-offset_left = 1742.0
-offset_top = 994.00006
-offset_right = 1810.0
-offset_bottom = 1025.0
-scale = Vector2(2.5, 2.5)
-text = "go back"
-
-[node name="onlinestagesmenu" type="Node2D" parent="."]
-
-[node name="title" type="Label" parent="onlinestagesmenu"]
-offset_left = 1097.0
-offset_top = 11.0
-offset_right = 1910.0
-offset_bottom = 186.0
-text = "online stages"
-label_settings = SubResource("LabelSettings_7jp70")
-
-[node name="subtitle" type="Label" parent="onlinestagesmenu/title"]
-layout_mode = 0
-offset_left = 115.105
-offset_top = 155.0
-offset_right = 866.105
-offset_bottom = 247.99997
-text = "stages by other wawa clickers"
-label_settings = SubResource("LabelSettings_mxgkd")
-
-[node name="wawabanner" type="ColorRect" parent="onlinestagesmenu/title"]
-layout_mode = 0
-offset_left = 252.0
-offset_top = 228.0
-offset_right = 812.0
-offset_bottom = 273.0
-color = Color(0.52906674, 0.5290667, 0.5290669, 1)
-
-[node name="Label" type="Label" parent="onlinestagesmenu/title/wawabanner"]
-layout_mode = 0
-offset_right = 652.0
-offset_bottom = 45.0
-text = "wawawawawawawawawawawawawawaw"
-label_settings = SubResource("LabelSettings_g6gyw")
-
-[node name="goback" type="Button" parent="onlinestagesmenu"]
-offset_left = 1742.0
-offset_top = 994.00006
-offset_right = 1810.0
-offset_bottom = 1025.0
-scale = Vector2(2.5, 2.5)
-text = "go back"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="onlinestagesmenu"]
-offset_right = 816.0
-offset_bottom = 1080.0
-
-[node name="Control" type="VBoxContainer" parent="onlinestagesmenu/ScrollContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="onlinecustomstage" type="ColorRect" parent="onlinestagesmenu/ScrollContainer/Control"]
-visible = false
-custom_minimum_size = Vector2(768, 241)
-layout_mode = 2
-color = Color(0.45882353, 0.45882353, 0.45882353, 1)
-
-[node name="Title" type="Label" parent="onlinestagesmenu/ScrollContainer/Control/onlinecustomstage"]
-layout_mode = 0
-offset_left = 9.0
-offset_top = 7.0
-offset_right = 561.0
-offset_bottom = 95.0
-text = "custom stage title"
-label_settings = SubResource("LabelSettings_3dmrc")
-
-[node name="Author" type="Label" parent="onlinestagesmenu/ScrollContainer/Control/onlinecustomstage"]
-layout_mode = 0
-offset_left = 9.0
-offset_top = 86.59
-offset_right = 561.0
-offset_bottom = 174.5899
-text = "by Author"
-label_settings = SubResource("LabelSettings_81l6r")
-
-[node name="Rating" type="Label" parent="onlinestagesmenu/ScrollContainer/Control/onlinecustomstage"]
-layout_mode = 0
-offset_left = 9.0
-offset_top = 171.075
-offset_right = 561.0
-offset_bottom = 239.08
-text = "1.00★"
-label_settings = SubResource("LabelSettings_rsfmq")
-
-[node name="playbtn" type="Button" parent="onlinestagesmenu/ScrollContainer/Control/onlinecustomstage"]
-layout_mode = 0
-offset_left = 699.0
-offset_top = 149.0
-offset_right = 740.0
-offset_bottom = 180.0
-scale = Vector2(2.5, 2.5)
-text = "play"
 script = ExtResource("16_mxgkd")
 
 [node name="blackbg" type="ColorRect" parent="."]
@@ -320,6 +223,4 @@ offset_bottom = 1017.0
 [connection signal="pressed" from="solomenu/classicstagesbtn" to="." method="_on_classicstagesbtn_pressed"]
 [connection signal="pressed" from="solomenu/onlinecustomstagesbtn" to="." method="_on_onlinecustomstagesbtn_pressed"]
 [connection signal="pressed" from="solomenu/customstagebtn" to="solomenu/customstagebtn" method="_on_pressed"]
-[connection signal="pressed" from="solomenu/goback" to="." method="_on_goback_solomenu_pressed"]
-[connection signal="pressed" from="onlinestagesmenu/goback" to="." method="_on_goback_onlinestagesmenu_pressed"]
 [connection signal="pressed" from="wawahitbox" to="." method="_on_wawahitbox_pressed"]

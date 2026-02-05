@@ -1,3 +1,4 @@
+# 0.88 ★
 extends Node2D
 
 @export var fire_rate := 0.05
@@ -32,6 +33,7 @@ func _on_wawa_shot() -> void:
 		await get_tree().create_timer(3).timeout
 		get_tree().change_scene_to_file("res://scenes/winscreen.tscn")
 
+var counter = 31
 var wawas = []
 func _on_ok_pressed() -> void:
 	DiscordRPC.state = "stage 3 (shoot the wawa)"
@@ -45,7 +47,6 @@ func _on_ok_pressed() -> void:
 		copy.visible = true
 		wawas.append(copy)
 		$Wawa.get_parent().add_child(copy)
-	var counter = 31
 	for i in range(31):
 		$AudioStreamPlayer2D2.stream = load("res://audio/tick.wav")
 		$AudioStreamPlayer2D2.play()

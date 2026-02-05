@@ -1,3 +1,4 @@
+# 1.00 ★
 extends Node2D
 
 func _ready() -> void:
@@ -20,10 +21,12 @@ var wawaskilled = 0
 func _on_wawa_clicked() -> void:
 	wawaskilled+=1
 	if wawaskilled == 35:
+		print("star ranking:", 1.15-(30.0-float(counter))/100.0)
 		await get_tree().create_timer(2).timeout
 		Global.music_playbacktime = $AudioStreamPlayer2D.get_playback_position()
 		get_tree().change_scene_to_file("res://scenes/stages/stage3.tscn")
 
+var counter = 31
 var wawas = []
 func _on_ok_pressed() -> void:
 	DiscordRPC.state = "stage 1 (click the wawas!!!)"
@@ -36,7 +39,6 @@ func _on_ok_pressed() -> void:
 		copy.visible = true
 		wawas.append(copy)
 		$wawa.get_parent().add_child(copy)
-	var counter = 31
 	for i in range(31):
 		$AudioStreamPlayer2D2.stream = load("res://audio/tick.wav")
 		$AudioStreamPlayer2D2.play()

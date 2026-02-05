@@ -21,6 +21,7 @@ func load_and_return_popuptext(path):
 
 var movement = true
 var elementfilepaths = {}
+var onlineelementfilepaths = {}
 func _ready() -> void:
 	DirAccess.make_dir_absolute("user://customstages")
 	$bg.modulate.a = 0.0
@@ -38,8 +39,10 @@ func _ready() -> void:
 	$mainmenu/exitbtn.position = Vector2(-403, 867)
 	$solomenu.visible = false
 	$solomenu.modulate.a = 0.0
+	$onlinestagesmenu.visible = false
+	$onlinestagesmenu.modulate.a = 0.0
 	
-	var lastpos = $solomenu/classicstagesbtn.position.y
+	var lastpos = $solomenu/onlinecustomstagesbtn.position.y
 	# get custom stages
 	for file in get_file_list("user://customstages"):
 		var copy: Button = $solomenu/customstagebtn.duplicate(1)
@@ -89,9 +92,9 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	$mainmenu/Wawa.rotation_degrees += 1
-	$solomenu/title/wawabanner/Label.position.x -= 1.0
-	if $solomenu/title/wawabanner/Label.position.x == -89.0:
-		$solomenu/title/wawabanner/Label.position.x = 0.0
+	$onlinestagesmenu/title/wawabanner/Label.position.x -= 1.0
+	if $onlinestagesmenu/title/wawabanner/Label.position.x == -89.0:
+		$onlinestagesmenu/title/wawabanner/Label.position.x = 0.0
 
 var playtoggled = false
 func _on_playbtn_pressed() -> void:
@@ -225,3 +228,156 @@ func _on_customstagebtn_pressed(element) -> void:
 		await get_tree().create_timer(0.0125).timeout
 	Global.customstagetotry = elementfilepaths[element]
 	get_tree().change_scene_to_file("res://scenes/customstage.tscn")
+
+func _on_onlinecustomstagesbtn_pressed() -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
+	$AudioStreamPlayer2D2.play()
+	
+	# get online custom stages
+	var httpreq = HTTPRequest.new()
+	add_child(httpreq)
+	httpreq.request_completed.connect(_on_request_completed)
+	var err = httpreq.request(
+		"http://ctw.threepm.xyz/api/v1/liststages",
+		PackedStringArray(),
+		HTTPClient.Method.METHOD_GET
+	)
+	if err != OK:
+		print("Request failed to start: ", err)
+		
+	for i in range(40):
+		$solomenu.modulate.a -= 0.025
+		await get_tree().create_timer(0.005).timeout
+	$solomenu.visible = false
+	await get_tree().create_timer(0.25).timeout
+	$onlinestagesmenu.visible = true
+	for i in range(40):
+		$onlinestagesmenu.modulate.a += 0.025
+		await get_tree().create_timer(0.005).timeout
+
+func get_onlinestage_popuptext(stageid: String) -> String:
+	var url = "http://ctw.threepm.xyz/api/v1/stagepopuptext/" + stageid
+	var httpreq = HTTPRequest.new()
+	add_child(httpreq)
+	var err = httpreq.request(url, PackedStringArray(), HTTPClient.Method.METHOD_GET)
+	if err != OK:
+		print("Request failed to start: ", err)
+		return ""
+	var result = await httpreq.request_completed
+	var response_code = result[1]
+	var body = result[3]
+	if response_code != 200:
+		print("HTTP Error (b): ", response_code)
+		return ""
+	var json = JSON.new()
+	var parse_result = json.parse(body.get_string_from_utf8())
+	if parse_result != OK:
+		print("JSON Parse Error")
+		return ""
+	return json.get_data()
+	
+func get_onlinestage_info(stageid: String) -> Dictionary:
+	var url = "http://ctw.threepm.xyz/api/v1/stageinfo/" + stageid
+	var httpreq = HTTPRequest.new()
+	add_child(httpreq)
+	var err = httpreq.request(url, PackedStringArray(), HTTPClient.Method.METHOD_GET)
+	if err != OK:
+		print("Request failed to start: ", err)
+		return {}
+	var result = await httpreq.request_completed
+	var response_code = result[1]
+	var body = result[3]
+	if response_code != 200:
+		print("HTTP Error (idontevenknowanymore): ", response_code)
+		return {}
+	var json = JSON.new()
+	var parse_result = json.parse(body.get_string_from_utf8())
+	if parse_result != OK:
+		print("JSON Parse Error")
+		return {}
+	return json.get_data()
+
+func _on_request_completed(_result, response_code, _headers, body):
+	if response_code != 200:
+		print("HTTP Error (a): ", response_code)
+		return
+	var json = JSON.new()
+	var parse_result = json.parse(body.get_string_from_utf8())
+	if parse_result != OK:
+		print("JSON Parse Error")
+		return
+	var response = json.get_data()
+	var lastpos = $onlinestagesmenu/ScrollContainer/Control/onlinecustomstage.position.y - 255
+	for file in response:
+		var copy: ColorRect = $onlinestagesmenu/ScrollContainer/Control/onlinecustomstage.duplicate(1)
+		var popup_text = await get_onlinestage_popuptext(file)
+		var stageinfo = await get_onlinestage_info(file)
+		copy.get_node("Title").text = popup_text
+		copy.get_node("Author").text = "by "+stageinfo.author
+		copy.get_node("Rating").text = str(stageinfo.ranking)+"★"
+		copy.position.y = lastpos + 255
+		copy.visible = true
+		if len(popup_text)>20:copy.get_node("Title").label_settings.font_size=64-1.6*(len(popup_text)-20)
+		copy.get_node("playbtn").set_script($onlinestagesmenu/ScrollContainer/Control/onlinecustomstage/playbtn.get_script())
+		copy.get_node("playbtn").got_pressed.connect(onlinecustomstageplaybtn_pressed)
+		onlineelementfilepaths[copy.get_node("playbtn")] = file
+		lastpos = copy.position.y
+		$onlinestagesmenu/ScrollContainer/Control/onlinecustomstage.get_parent().add_child(copy)
+
+func save_to_file(content, path):
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	file.store_buffer(content)
+	file.close()
+
+func get_onlinestage(stageid: String) -> void:
+	var url = "http://ctw.threepm.xyz/api/v1/stage/" + stageid
+	var httpreq = HTTPRequest.new()
+	add_child(httpreq)
+	var err = httpreq.request(url, PackedStringArray(), HTTPClient.Method.METHOD_GET)
+	if err != OK:
+		print("Request failed to start: ", err)
+	var result = await httpreq.request_completed
+	var response_code = result[1]
+	if response_code != 200:
+		print("HTTP Error (c): ", response_code)
+	var body = result[3]
+	save_to_file(body, "user://customstages/" + stageid)
+	
+func onlinecustomstageplaybtn_pressed(element) -> void:
+	$onlinestagesmenu/title.text = "downloading"
+	$AudioStreamPlayer2D2.stream = load("res://audio/editortry.ogg")
+	$AudioStreamPlayer2D2.play()
+	await get_onlinestage(onlineelementfilepaths[element])
+	$blackbg.visible = true
+	for i in range(80):
+		$AudioStreamPlayer2D.volume_db -= 1
+		$blackbg.modulate.a += 0.0125
+		await get_tree().create_timer(0.0125).timeout
+	Global.customstagetotry = "user://customstages/" + onlineelementfilepaths[element]
+	get_tree().change_scene_to_file("res://scenes/customstage.tscn")
+
+func _on_goback_onlinestagesmenu_pressed() -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
+	$AudioStreamPlayer2D2.play()
+	for i in range(40):
+		$onlinestagesmenu.modulate.a -= 0.025
+		await get_tree().create_timer(0.005).timeout
+	$onlinestagesmenu.visible = false
+	await get_tree().create_timer(0.25).timeout
+	$solomenu.visible = true
+	for i in range(40):
+		$solomenu.modulate.a += 0.025
+		await get_tree().create_timer(0.005).timeout
+
+func _on_goback_solomenu_pressed() -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
+	$AudioStreamPlayer2D2.play()
+	for i in range(40):
+		$solomenu.modulate.a -= 0.025
+		await get_tree().create_timer(0.005).timeout
+	$solomenu.visible = false
+	await get_tree().create_timer(0.25).timeout
+	$mainmenu.visible = true
+	for i in range(40):
+		$mainmenu.modulate.a += 0.025
+		await get_tree().create_timer(0.005).timeout
