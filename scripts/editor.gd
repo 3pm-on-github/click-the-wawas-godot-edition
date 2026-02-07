@@ -464,7 +464,6 @@ func _on_settings_donebtn_pressed() -> void:
 var musicpath = "user://customstagemusic.mp3"
 func _on_edit_music_pressed() -> void:
 	$settingspopup.visible = false
-	print(musicpath)
 	$editmusicpopup/changebtn.text = musicpath.get_file()
 	$editmusicpopup.visible = true
 	prevmusictime = null
