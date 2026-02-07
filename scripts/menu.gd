@@ -24,6 +24,17 @@ func loadconfig():
 	if src.get_string_from_utf8() == "": return
 	return JSON.parse_string(src.get_string_from_utf8())
 
+var bpm = 140
+var stopthewawabeat = false
+func wawabeat():
+	while true:
+		if stopthewawabeat:
+			break
+		var tween1 = get_tree().create_tween()
+		tween1.tween_property($mainmenu/Wawa, "scale", Vector2(6.0, 6.0), 0.1).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+		tween1.tween_property($mainmenu/Wawa, "scale", Vector2(5.0, 5.0), (60.0/bpm)-0.1)
+		await get_tree().create_timer(60.0/bpm).timeout
+
 var movement = true
 var elementfilepaths = {}
 var onlineelementfilepaths = {}
@@ -74,10 +85,13 @@ func _ready() -> void:
 	for i in range(25):
 		$bg.modulate.a += 0.04
 		await get_tree().create_timer(0.005).timeout
-	$AudioStreamPlayer2D.play()
+	$AudioStreamPlayer2D.play(0.117)
+	wawabeat()
 	var tween = get_tree().create_tween()
-	$mainmenu/Wawa.rotation_degrees = 0
+	var wawatween = get_tree().create_tween()
+	$mainmenu/Wawa.rotation_degrees = -45
 	tween.tween_property($mainmenu/Wawa, "position", Vector2(1413, 525), 1.0).set_trans(Tween.TRANS_SINE)
+	wawatween.tween_property($mainmenu/Wawa, "rotation_degrees", 0.0, 1.0).set_trans(Tween.TRANS_SINE)
 	tween.tween_property($mainmenu/title, "position", Vector2(64, 64), 1.0).set_trans(Tween.TRANS_SINE)
 	tween.tween_property($mainmenu/playbtn, "position", Vector2(47, 443), 0.5).set_trans(Tween.TRANS_SINE)
 	await get_tree().create_timer(2.25).timeout
@@ -103,7 +117,6 @@ func _ready() -> void:
 				await get_tree().create_timer(0.0375).timeout
 
 func _process(_delta: float) -> void:
-	$mainmenu/Wawa.rotation_degrees += 1
 	$onlinestagesmenu/title/wawabanner/Label.position.x -= 1.0
 	if $onlinestagesmenu/title/wawabanner/Label.position.x == -89.0:
 		$onlinestagesmenu/title/wawabanner/Label.position.x = 0.0
@@ -351,7 +364,9 @@ func _on_request_completed(_result, response_code, _headers, body):
 		if len(popup_text)>20:copy.get_node("Title").label_settings.font_size=64-1.6*(len(popup_text)-20)
 		copy.get_node("playbtn").set_script($onlinestagesmenu/ScrollContainer/Control/onlinecustomstage/playbtn.get_script())
 		copy.get_node("playbtn").got_pressed.connect(onlinecustomstageplaybtn_pressed)
-		onlineelementfilepaths[copy.get_node("playbtn")] = file
+		copy.get_node("downloadbtn").set_script($onlinestagesmenu/ScrollContainer/Control/onlinecustomstage/downloadbtn.get_script())
+		copy.get_node("downloadbtn").got_pressed.connect(onlinecustomstagedownloadbtn_pressed)
+		onlineelementfilepaths[copy.get_node("downloadbtn")] = file
 		lastpos = copy.position.y
 		$onlinestagesmenu/ScrollContainer/Control/onlinecustomstage.get_parent().add_child(copy)
 
@@ -360,7 +375,7 @@ func save_to_file(content, path):
 	file.store_buffer(content)
 	file.close()
 
-func get_onlinestage(stageid: String) -> void:
+func get_onlinestage(stageid: String) -> String:
 	var url = loadedconfig.api_url+"/stage/" + stageid
 	var httpreq = HTTPRequest.new()
 	add_child(httpreq)
@@ -373,6 +388,7 @@ func get_onlinestage(stageid: String) -> void:
 		print("HTTP Error (c): ", response_code)
 	var body = result[3]
 	save_to_file(body, "user://customstages/" + stageid)
+	return "user://customstages/" + stageid
 	
 func onlinecustomstageplaybtn_pressed(element) -> void:
 	$onlinestagesmenu/title.text = "downloading"
@@ -386,6 +402,29 @@ func onlinecustomstageplaybtn_pressed(element) -> void:
 		await get_tree().create_timer(0.0125).timeout
 	Global.customstagetotry = "user://customstages/" + onlineelementfilepaths[element]
 	get_tree().change_scene_to_file("res://scenes/customstage.tscn")
+	
+func load_from_file(path):
+	var content = FileAccess.get_file_as_bytes(path)
+	return content
+	
+func loadcontent(path) -> Dictionary:
+	var src: PackedByteArray = load_from_file(path)
+	return JSON.parse_string(src.get_string_from_utf8())
+	
+func onlinecustomstagedownloadbtn_pressed(element) -> void:
+	$onlinestagesmenu/title.text = "downloading"
+	$AudioStreamPlayer2D2.stream = load("res://audio/clickfast.ogg")
+	$AudioStreamPlayer2D2.play()
+	stopthewawabeat=true
+	var filepath = await get_onlinestage(onlineelementfilepaths[element])
+	$onlinestagesmenu/title.text = "online stages"
+	$AudioStreamPlayer2D.stop()
+	var loadedcontent = loadcontent(filepath)
+	$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_buffer(Marshalls.base64_to_raw(loadedcontent.music_encodeddata))
+	$AudioStreamPlayer2D.play(loadedcontent.lights_startpos/1000)
+	bpm = loadedcontent.lights_bpm
+	stopthewawabeat=false
+	wawabeat()
 
 func _on_goback_onlinestagesmenu_pressed() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
