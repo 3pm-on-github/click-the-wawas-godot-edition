@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dwnaww5p7nnv0"]
+[gd_scene load_steps=18 format=3 uid="uid://dwnaww5p7nnv0"]
 
 [ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="1_b1cmn"]
 [ext_resource type="Script" uid="uid://dyfm5u32b7deo" path="res://scripts/editor.gd" id="1_pxqd5"]
@@ -37,9 +37,6 @@ font_size = 40
 
 [sub_resource type="LabelSettings" id="LabelSettings_5tm2q"]
 font_size = 32
-
-[sub_resource type="LabelSettings" id="LabelSettings_j8y2p"]
-font_size = 24
 
 [node name="editor" type="Node2D"]
 script = ExtResource("1_pxqd5")
@@ -234,15 +231,6 @@ offset_right = 105.0
 offset_bottom = 124.333374
 scale = Vector2(2, 2)
 text = "Edit Lights"
-
-[node name="EditAuthor" type="Button" parent="settingspopup"]
-layout_mode = 0
-offset_left = 207.0
-offset_top = 91.0
-offset_right = 303.0
-offset_bottom = 124.333374
-scale = Vector2(2, 2)
-text = "Edit Author"
 
 [node name="countereditpopup" type="ColorRect" parent="."]
 visible = false
@@ -545,45 +533,6 @@ offset_right = 361.0
 offset_bottom = 116.0
 text = "Enabled"
 
-[node name="editauthorpopup" type="ColorRect" parent="."]
-visible = false
-offset_left = 646.0
-offset_top = 327.0
-offset_right = 1286.0
-offset_bottom = 738.0
-color = Color(0.34407577, 0.34407574, 0.34407574, 1)
-
-[node name="Label" type="Label" parent="editauthorpopup"]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 7.0
-offset_right = 618.0
-offset_bottom = 144.0
-text = "Enter your username.
-Give yourself some credit!
-(This will be shown online if uploaded.
-Don't use your real name!)"
-label_settings = SubResource("LabelSettings_j8y2p")
-horizontal_alignment = 1
-
-[node name="donebtn" type="Button" parent="editauthorpopup"]
-layout_mode = 0
-offset_left = 232.0
-offset_top = 301.0
-offset_right = 281.0
-offset_bottom = 332.0
-scale = Vector2(3, 3)
-text = "Done"
-
-[node name="LineEdit" type="LineEdit" parent="editauthorpopup"]
-layout_mode = 0
-offset_left = 112.0
-offset_top = 191.73
-offset_right = 510.0
-offset_bottom = 238.73
-placeholder_text = "Your Username Here"
-max_length = 40
-
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_xg7d5")
 autoplay = true
@@ -624,7 +573,6 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="settingspopup/DeleteStage" to="." method="_on_delete_stage_pressed"]
 [connection signal="pressed" from="settingspopup/EditMusic" to="." method="_on_edit_music_pressed"]
 [connection signal="pressed" from="settingspopup/EditLights" to="." method="_on_edit_lights_pressed"]
-[connection signal="pressed" from="settingspopup/EditAuthor" to="." method="_on_edit_author_pressed"]
 [connection signal="pressed" from="countereditpopup/digit1/addbtn" to="." method="_on_digit1_addbtn_pressed"]
 [connection signal="pressed" from="countereditpopup/digit1/subbtn" to="." method="_on_digit1_subbtn_pressed"]
 [connection signal="pressed" from="countereditpopup/digit2/addbtn" to="." method="_on_digit2_addbtn_pressed"]
@@ -641,4 +589,3 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="editlightspopup/bpmfinder" to="." method="_on_bpmfinder_pressed"]
 [connection signal="value_changed" from="editlightspopup/BPM" to="." method="_on_bpm_value_changed"]
 [connection signal="pressed" from="editlightspopup/Enabled" to="." method="_on_editlights_enabled_pressed"]
-[connection signal="pressed" from="editauthorpopup/donebtn" to="." method="_on_editauthor_donebtn_pressed"]

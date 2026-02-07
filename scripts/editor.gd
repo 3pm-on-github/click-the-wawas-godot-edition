@@ -57,7 +57,13 @@ func returnsha256(data: Dictionary) -> String:
 	ctx.update(bytes)
 	var hashed: PackedByteArray = ctx.finish()
 	return hashed.hex_encode()
+	
+func loadconfig():
+	var src: PackedByteArray = FileAccess.get_file_as_bytes("user://config.json")
+	if src.get_string_from_utf8() == "": return
+	return JSON.parse_string(src.get_string_from_utf8())
 
+var loadedconfig = {"username": "wawaclicker"}
 var finalpath = ""
 var stageid = ""
 func save():
@@ -65,7 +71,7 @@ func save():
 	out['version'] = 1
 	out['counter'] = digit1*10+digit2
 	out['popup_text'] = popuptext
-	out['author'] = authorname
+	out['author'] = loadedconfig.username
 	out['lights_bpm'] = 0 if not lightsenabled else lightsbpm
 	out['lights_startpos'] = lightsstarttime*1000
 	out['lights_rgb'] = [lightsrgb.r8, lightsrgb.g8, lightsrgb.b8, lightsrgb.a8]
@@ -86,9 +92,9 @@ func save():
 	stageid = returnsha256(out)
 	save_to_file(JSON.stringify(out), finalpath)
 
-func savemusicpath(musicpath: String):
+func savemusicpath(musicpath2: String):
 	var out = loadedmusicpaths
-	out[musicpath.sha256_text()] = musicpath
+	out[musicpath.sha256_text()] = musicpath2
 	save_to_file(JSON.stringify(out), "user://savedmusicpaths.json")
 	loadedmusicpaths = out
 
@@ -120,6 +126,8 @@ func _ready() -> void:
 	dontrunthebpmpreview = true
 	if loadcontent():
 		loadedcontent = loadcontent()
+	if loadconfig():
+		loadedconfig = loadconfig()
 	if loadmusicpaths():
 		loadedmusicpaths = loadmusicpaths()
 		if loadedcontent.music_path_sha256 in loadedmusicpaths:
@@ -134,7 +142,6 @@ func _ready() -> void:
 	$editlightspopup/ColorPickerButton.color = lightsrgb
 	$countereditpopup.visible = false
 	$editpopuppopup.visible = false
-	$editauthorpopup.visible = false
 	$blackbg.visible = true
 	$selectorbg/uploading.visible = false
 	dontrunthebpmpreview = false
@@ -322,23 +329,6 @@ func _on_editpopup_donebtn_pressed() -> void:
 	DiscordRPC.state = "editing a stage ("+popuptext+")"
 	DiscordRPC.refresh()
 
-var authorname = "Wawa Clicker"
-func _on_edit_author_pressed() -> void:
-	$settingspopup.visible = false
-	$editauthorpopup/LineEdit.text = authorname
-	$editauthorpopup.visible = true
-	for element in elements:
-		element.visible = false
-	focus = ""
-
-func _on_editauthor_donebtn_pressed() -> void:
-	focus = ""
-	authorname = $editauthorpopup/LineEdit.text
-	if authorname == "":
-		authorname = "Wawa Clicker"
-	$editauthorpopup.visible = false
-	for element in elements:
-		element.visible = true
 	
 func _on_back_to_menu_pressed() -> void:
 	if len(elements) != 0:
