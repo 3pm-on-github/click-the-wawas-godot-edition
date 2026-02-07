@@ -73,9 +73,13 @@ func _ready() -> void:
 		copy.position.y = lastpos + 90
 		copy.visible = true
 		copy.set_script($solomenu/customstagebtn.get_script())
-		if copy.has_signal("got_pressed"):
-			copy.got_pressed.connect(_on_customstagebtn_pressed)
+		copy.got_pressed.connect(_on_customstagebtn_pressed)
+		copy.get_node("listenbtn").set_script($solomenu/customstagebtn.get_script())
+		copy.get_node("listenbtn").got_pressed.connect(_on_customstagelistenbtn_pressed)
+		if len(copy.text) > 12:
+			copy.get_node("listenbtn").position.x = 112+7.5*(len(copy.text)-12)+5
 		elementfilepaths[copy] = file
+		elementfilepaths[copy.get_node("listenbtn")] = file
 		lastpos = copy.position.y
 		$solomenu/customstagebtn.get_parent().add_child(copy)
 	
@@ -272,6 +276,20 @@ func _on_customstagebtn_pressed(element) -> void:
 		await get_tree().create_timer(0.0125).timeout
 	Global.customstagetotry = elementfilepaths[element]
 	get_tree().change_scene_to_file("res://scenes/customstage.tscn")
+
+func _on_customstagelistenbtn_pressed(element) -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/editortry.ogg")
+	$AudioStreamPlayer2D2.play()
+	stopthewawabeat=true
+	var filepath = elementfilepaths[element]
+	$AudioStreamPlayer2D.stop()
+	var loadedcontent = loadcontent(filepath)
+	await get_tree().create_timer(60.0/bpm).timeout
+	$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_buffer(Marshalls.base64_to_raw(loadedcontent.music_encodeddata))
+	$AudioStreamPlayer2D.play(loadedcontent.lights_startpos/1000)
+	bpm = loadedcontent.lights_bpm
+	stopthewawabeat=false
+	wawabeat()
 
 func _on_onlinecustomstagesbtn_pressed() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")

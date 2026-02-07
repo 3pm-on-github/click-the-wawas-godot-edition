@@ -197,6 +197,14 @@ scale = Vector2(2.5, 2.5)
 text = "custom stage"
 script = ExtResource("16_mxgkd")
 
+[node name="listenbtn" type="Button" parent="solomenu/customstagebtn"]
+layout_mode = 0
+offset_left = 117.19999
+offset_right = 168.20001
+offset_bottom = 31.0
+text = "listen"
+script = ExtResource("16_mxgkd")
+
 [node name="goback" type="Button" parent="solomenu"]
 offset_left = 1742.0
 offset_top = 994.00006
