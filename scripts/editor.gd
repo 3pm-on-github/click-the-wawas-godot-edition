@@ -90,7 +90,7 @@ func save():
 		var id = element.elementid
 		var x := int(element.position.x)
 		var y := int(element.position.y)
-		var flags := 0
+		var flags = element.flags
 		assert(id >= 0)
 		assert(x >= 0)
 		assert(y >= 0)
@@ -287,6 +287,15 @@ func _on_bg_gui_input(event: InputEvent) -> void:
 				copy.position.y = 0
 			copy.visible = true
 			wawacount += 1
+			copy.get_node("Flag").visible = false
+			if movingwawachecktoggled:
+				copy.flags = 1
+				copy.get_node("Flag").visible = true
+				copy.get_node("Flag").text = "M"
+			elif bouncingwawachecktoggled:
+				copy.flags = 2
+				copy.get_node("Flag").visible = true
+				copy.get_node("Flag").text = "B"
 			copy.remove_me.connect(_on_wawa_remove_me)
 			$AudioStreamPlayer2D3.stream = load("res://audio/ow.wav")
 			$AudioStreamPlayer2D3.play()
@@ -449,10 +458,12 @@ func _on_mrfresh_remove_me(mrfresh):
 	elements.erase(mrfresh)
 	mrfresh.queue_free()
 
+var oldfocus = ""
 func _on_settings_pressed() -> void:
 	$settingspopup.visible = true
 	for element in elements:
 		element.visible = false
+	oldfocus = focus
 	focus = ""
 
 func _on_settings_donebtn_pressed() -> void:
@@ -650,3 +661,31 @@ func _on_upload_pressed() -> void:
 		await get_tree().create_timer(0.01).timeout
 	$selectorbg/uploading.modulate.a = 0.0
 	$selectorbg/uploading.visible = false
+
+func _on_edit_element_pressed() -> void:
+	$settingspopup.visible = false
+	$editelementpopup.visible = true
+	$editelementpopup/bouncingwawacheck.visible = false
+	$editelementpopup/movingwawacheck.visible = false
+	if oldfocus == "Wawa":
+		$editelementpopup/bouncingwawacheck.visible = true
+		$editelementpopup/movingwawacheck.visible = true
+	for element in elements:
+		element.visible = false
+	focus = ""
+
+var movingwawachecktoggled = false
+func _on_movingwawacheck_pressed() -> void:
+	movingwawachecktoggled = not movingwawachecktoggled
+	$editelementpopup/bouncingwawacheck.disabled = movingwawachecktoggled
+
+var bouncingwawachecktoggled = false
+func _on_bouncingwawacheck_pressed() -> void:
+	bouncingwawachecktoggled = not bouncingwawachecktoggled
+	$editelementpopup/movingwawacheck.disabled = bouncingwawachecktoggled
+
+func _on_editelement_donebtn_pressed() -> void:
+	$editelementpopup.visible = false
+	for element in elements:
+		element.visible = true
+	focus = oldfocus

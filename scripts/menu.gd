@@ -35,6 +35,20 @@ func wawabeat():
 		tween1.tween_property($mainmenu/Wawa, "scale", Vector2(5.0, 5.0), (60.0/bpm)-0.1)
 		await get_tree().create_timer(60.0/bpm).timeout
 
+func titlemove():
+	var titletween = get_tree().create_tween()
+	titletween.tween_property($mainmenu/title, "position:y", $mainmenu/title.position.y + 20, 1.5)\
+		.set_trans(Tween.TRANS_SINE)
+	await get_tree().create_timer(1.5).timeout
+	while true:
+		if movement:
+			titletween = get_tree().create_tween()
+			titletween.tween_property($mainmenu/title, "position:y", $mainmenu/title.position.y - 40, 3.0).set_trans(Tween.TRANS_SINE)
+			await get_tree().create_timer(3.0).timeout
+			titletween = get_tree().create_tween()
+			titletween.tween_property($mainmenu/title, "position:y", $mainmenu/title.position.y + 40, 3.0).set_trans(Tween.TRANS_SINE)
+			await get_tree().create_timer(3.0).timeout
+
 var movement = true
 var elementfilepaths = {}
 var onlineelementfilepaths = {}
@@ -64,6 +78,7 @@ func _ready() -> void:
 	$configmenu/onlineapiurl/LineEdit.text = loadedconfig.api_url
 	$configmenu/onlineusername/LineEdit.text = loadedconfig.username
 	$configmenu/onlinepassword/LineEdit.text = loadedconfig.password
+	titlemove()
 	
 	var lastpos = $solomenu/onlinecustomstagesbtn.position.y
 	# get custom stages
@@ -108,17 +123,6 @@ func _ready() -> void:
 	var tween4 = get_tree().create_tween()
 	tween4.tween_property($mainmenu/exitbtn, "position", Vector2(47, 867), 0.5).set_trans(Tween.TRANS_SINE)
 	$mainmenu/solobtn.visible = true
-	while true:
-		if movement:
-			for i in range(40):
-				$mainmenu/title.position.y += 0.5
-				await get_tree().create_timer(0.0375).timeout
-			for i in range(80):
-				$mainmenu/title.position.y -= 0.5
-				await get_tree().create_timer(0.0375).timeout
-			for i in range(40):
-				$mainmenu/title.position.y += 0.5
-				await get_tree().create_timer(0.0375).timeout
 
 func _process(_delta: float) -> void:
 	$onlinestagesmenu/title/wawabanner/Label.position.x -= 1.0

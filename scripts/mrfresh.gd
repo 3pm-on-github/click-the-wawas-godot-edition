@@ -5,6 +5,7 @@ func _process(_delta: float) -> void:
 	pass
 	
 @export var elementid := 1
+@export var flags := 1
 signal remove_me(mrfresh)
 
 func _on_gui_input(event: InputEvent) -> void:

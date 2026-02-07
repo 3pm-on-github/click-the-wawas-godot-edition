@@ -100,6 +100,12 @@ func _on_ok_pressed() -> void:
 			copy.position.x = element.x
 			copy.position.y = element.y
 			copy.visible = true
+			if element.flags == 1: # moving wawas
+				copy.set_script(load("res://scripts/wawa5.gd"))
+			elif element.flags == 2: # bouncing wawas
+				copy.set_script(load("res://scripts/wawa6.gd"))
+				if loadedcontent.lights_bpm != 0.0:
+					copy.bpm = loadedcontent.lights_bpm
 			copy.wawa_clicked.connect(_on_element_clicked)
 			elements.append(copy)
 			$wawa.get_parent().add_child(copy)

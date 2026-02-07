@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://dwnaww5p7nnv0"]
+[gd_scene load_steps=19 format=3 uid="uid://dwnaww5p7nnv0"]
 
 [ext_resource type="Texture2D" uid="uid://cmiu3tsk657of" path="res://images/Wawa.png" id="1_b1cmn"]
 [ext_resource type="Script" uid="uid://dyfm5u32b7deo" path="res://scripts/editor.gd" id="1_pxqd5"]
@@ -11,6 +11,11 @@
 
 [sub_resource type="LabelSettings" id="LabelSettings_pxqd5"]
 font_size = 64
+
+[sub_resource type="LabelSettings" id="LabelSettings_j8y2p"]
+font_size = 32
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_eqbpn"]
 font_size = 38
@@ -74,6 +79,16 @@ offset_bottom = 601.0
 scale = Vector2(0.6, 0.5)
 texture_normal = ExtResource("1_b1cmn")
 script = ExtResource("3_eqbpn")
+
+[node name="Flag" type="Label" parent="wawa"]
+visible = false
+layout_mode = 0
+offset_left = 48.333332
+offset_top = 98.0
+offset_right = 78.33333
+offset_bottom = 143.0
+text = "M"
+label_settings = SubResource("LabelSettings_j8y2p")
 
 [node name="mrfresh" type="TextureButton" parent="."]
 visible = false
@@ -231,6 +246,15 @@ offset_right = 105.0
 offset_bottom = 124.333374
 scale = Vector2(2, 2)
 text = "Edit Lights"
+
+[node name="EditElement" type="Button" parent="settingspopup"]
+layout_mode = 0
+offset_left = 208.0
+offset_top = 91.0
+offset_right = 314.0
+offset_bottom = 124.333374
+scale = Vector2(2, 2)
+text = "Edit Element"
 
 [node name="countereditpopup" type="ColorRect" parent="."]
 visible = false
@@ -533,6 +557,51 @@ offset_right = 361.0
 offset_bottom = 116.0
 text = "Enabled"
 
+[node name="editelementpopup" type="ColorRect" parent="."]
+visible = false
+offset_left = 646.0
+offset_top = 327.0
+offset_right = 1286.0
+offset_bottom = 738.0
+color = Color(0.34407577, 0.34407574, 0.34407574, 1)
+
+[node name="Label" type="Label" parent="editelementpopup"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 11.0
+offset_right = 583.0
+offset_bottom = 78.0
+text = "Edit Element"
+label_settings = SubResource("LabelSettings_ba0ut")
+horizontal_alignment = 1
+
+[node name="donebtn" type="Button" parent="editelementpopup"]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 301.0
+offset_right = 281.0
+offset_bottom = 332.0
+scale = Vector2(3, 3)
+text = "Done"
+
+[node name="movingwawacheck" type="CheckBox" parent="editelementpopup"]
+layout_mode = 0
+offset_left = 182.0
+offset_top = 121.0
+offset_right = 318.0
+offset_bottom = 152.0
+scale = Vector2(2, 2)
+text = "Moving Wawa"
+
+[node name="bouncingwawacheck" type="CheckBox" parent="editelementpopup"]
+layout_mode = 0
+offset_left = 170.0
+offset_top = 184.0
+offset_right = 322.0
+offset_bottom = 215.0
+scale = Vector2(2, 2)
+text = "Bouncing Wawa"
+
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_xg7d5")
 autoplay = true
@@ -573,6 +642,7 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="settingspopup/DeleteStage" to="." method="_on_delete_stage_pressed"]
 [connection signal="pressed" from="settingspopup/EditMusic" to="." method="_on_edit_music_pressed"]
 [connection signal="pressed" from="settingspopup/EditLights" to="." method="_on_edit_lights_pressed"]
+[connection signal="pressed" from="settingspopup/EditElement" to="." method="_on_edit_element_pressed"]
 [connection signal="pressed" from="countereditpopup/digit1/addbtn" to="." method="_on_digit1_addbtn_pressed"]
 [connection signal="pressed" from="countereditpopup/digit1/subbtn" to="." method="_on_digit1_subbtn_pressed"]
 [connection signal="pressed" from="countereditpopup/digit2/addbtn" to="." method="_on_digit2_addbtn_pressed"]
@@ -589,3 +659,6 @@ color = Color(0, 0, 0, 1)
 [connection signal="pressed" from="editlightspopup/bpmfinder" to="." method="_on_bpmfinder_pressed"]
 [connection signal="value_changed" from="editlightspopup/BPM" to="." method="_on_bpm_value_changed"]
 [connection signal="pressed" from="editlightspopup/Enabled" to="." method="_on_editlights_enabled_pressed"]
+[connection signal="pressed" from="editelementpopup/donebtn" to="." method="_on_editelement_donebtn_pressed"]
+[connection signal="pressed" from="editelementpopup/movingwawacheck" to="." method="_on_movingwawacheck_pressed"]
+[connection signal="pressed" from="editelementpopup/bouncingwawacheck" to="." method="_on_bouncingwawacheck_pressed"]
