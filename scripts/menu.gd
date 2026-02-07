@@ -19,9 +19,15 @@ func load_and_return_popuptext(path):
 	var src: PackedByteArray = FileAccess.get_file_as_bytes(path)
 	return JSON.parse_string(src.get_string_from_utf8()).popup_text
 
+func loadconfig():
+	var src: PackedByteArray = FileAccess.get_file_as_bytes("user://config.json")
+	if src.get_string_from_utf8() == "": return
+	return JSON.parse_string(src.get_string_from_utf8())
+
 var movement = true
 var elementfilepaths = {}
 var onlineelementfilepaths = {}
+var loadedconfig = {}
 func _ready() -> void:
 	DirAccess.make_dir_absolute("user://customstages")
 	$bg.modulate.a = 0.0
@@ -41,6 +47,12 @@ func _ready() -> void:
 	$solomenu.modulate.a = 0.0
 	$onlinestagesmenu.visible = false
 	$onlinestagesmenu.modulate.a = 0.0
+	$configmenu.visible = false
+	$configmenu.modulate.a = 0.0
+	loadedconfig = loadconfig()
+	$configmenu/onlineapiurl/LineEdit.text = loadedconfig.api_url
+	$configmenu/onlineusername/LineEdit.text = loadedconfig.username
+	$configmenu/onlinepassword/LineEdit.text = loadedconfig.password
 	
 	var lastpos = $solomenu/onlinecustomstagesbtn.position.y
 	# get custom stages
@@ -121,6 +133,14 @@ func _on_playbtn_pressed() -> void:
 func _on_playbtn_mouse_entered() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/hovering.wav")
 	$AudioStreamPlayer2D2.play()
+	
+func _on_editorbtn_mouse_entered() -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/hovering.wav")
+	$AudioStreamPlayer2D2.play()
+	
+func _on_configbtn_mouse_entered() -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/hovering.wav")
+	$AudioStreamPlayer2D2.play()
 
 func _on_exitbtn_mouse_entered() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/hovering.wav")
@@ -135,6 +155,21 @@ func _on_exitbtn_pressed() -> void:
 		$blackbg.modulate.a += 0.0125
 		await get_tree().create_timer(0.0125).timeout
 	get_tree().quit()
+	
+func _on_configbtn_pressed() -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
+	$AudioStreamPlayer2D2.play()
+	$wawahitbox.visible = false
+	$mainmenu/solobtn.visible = false
+	for i in range(40):
+		$mainmenu.modulate.a -= 0.025
+		await get_tree().create_timer(0.005).timeout
+	$mainmenu.visible = false
+	await get_tree().create_timer(0.25).timeout
+	$configmenu.visible = true
+	for i in range(40):
+		$configmenu.modulate.a += 0.025
+		await get_tree().create_timer(0.005).timeout
 
 var clicks = 0
 func _on_wawahitbox_pressed() -> void:
@@ -157,10 +192,6 @@ func _on_wawahitbox_pressed() -> void:
 		await get_tree().create_timer(1.0).timeout
 		movement = false
 		get_tree().change_scene_to_file("res://scenes/wawabossfight.tscn")
-
-func _on_editorbtn_mouse_entered() -> void:
-	$AudioStreamPlayer2D2.stream = load("res://audio/hovering.wav")
-	$AudioStreamPlayer2D2.play()
 
 func _on_editorbtn_pressed() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
@@ -238,7 +269,7 @@ func _on_onlinecustomstagesbtn_pressed() -> void:
 	add_child(httpreq)
 	httpreq.request_completed.connect(_on_request_completed)
 	var err = httpreq.request(
-		"http://ctw.threepm.xyz/api/v1/liststages",
+		loadedconfig.api_url+"/liststages",
 		PackedStringArray(),
 		HTTPClient.Method.METHOD_GET
 	)
@@ -256,7 +287,7 @@ func _on_onlinecustomstagesbtn_pressed() -> void:
 		await get_tree().create_timer(0.005).timeout
 
 func get_onlinestage_popuptext(stageid: String) -> String:
-	var url = "http://ctw.threepm.xyz/api/v1/stagepopuptext/" + stageid
+	var url = loadedconfig.api_url+"/stagepopuptext/" + stageid
 	var httpreq = HTTPRequest.new()
 	add_child(httpreq)
 	var err = httpreq.request(url, PackedStringArray(), HTTPClient.Method.METHOD_GET)
@@ -277,7 +308,7 @@ func get_onlinestage_popuptext(stageid: String) -> String:
 	return json.get_data()
 	
 func get_onlinestage_info(stageid: String) -> Dictionary:
-	var url = "http://ctw.threepm.xyz/api/v1/stageinfo/" + stageid
+	var url = loadedconfig.api_url+"/stageinfo/" + stageid
 	var httpreq = HTTPRequest.new()
 	add_child(httpreq)
 	var err = httpreq.request(url, PackedStringArray(), HTTPClient.Method.METHOD_GET)
@@ -330,7 +361,7 @@ func save_to_file(content, path):
 	file.close()
 
 func get_onlinestage(stageid: String) -> void:
-	var url = "http://ctw.threepm.xyz/api/v1/stage/" + stageid
+	var url = loadedconfig.api_url+"/stage/" + stageid
 	var httpreq = HTTPRequest.new()
 	add_child(httpreq)
 	var err = httpreq.request(url, PackedStringArray(), HTTPClient.Method.METHOD_GET)
@@ -378,6 +409,44 @@ func _on_goback_solomenu_pressed() -> void:
 	$solomenu.visible = false
 	await get_tree().create_timer(0.25).timeout
 	$mainmenu.visible = true
+	$wawahitbox.visible = true
 	for i in range(40):
 		$mainmenu.modulate.a += 0.025
 		await get_tree().create_timer(0.005).timeout
+
+func saveconfig(api_url, username, password):
+	var out := {}
+	out['version'] = 1
+	out['api_url'] = api_url
+	out['username'] = username
+	if password != loadedconfig.password:
+		out['password'] = password.sha256_text()
+	else:
+		out['password'] = loadedconfig.password
+	var file = FileAccess.open("user://config.json", FileAccess.WRITE)
+	var data: PackedByteArray = PackedByteArray()
+	for character in JSON.stringify(out):
+		data.append(ord(character))
+	file.store_buffer(data)
+	file.close()
+	loadedconfig = loadconfig()
+	
+func _on_configmenu_goback_pressed() -> void:
+	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
+	$AudioStreamPlayer2D2.play()
+	saveconfig(
+		$configmenu/onlineapiurl/LineEdit.text,
+		$configmenu/onlineusername/LineEdit.text,
+		$configmenu/onlinepassword/LineEdit.text
+	)
+	for i in range(40):
+		$configmenu.modulate.a -= 0.025
+		await get_tree().create_timer(0.005).timeout
+	$configmenu.visible = false
+	await get_tree().create_timer(0.25).timeout
+	$mainmenu.visible = true
+	$wawahitbox.visible = true
+	for i in range(40):
+		$mainmenu.modulate.a += 0.025
+		await get_tree().create_timer(0.005).timeout
+	$mainmenu/solobtn.visible = true

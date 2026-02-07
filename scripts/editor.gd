@@ -57,38 +57,6 @@ func returnsha256(data: Dictionary) -> String:
 	ctx.update(bytes)
 	var hashed: PackedByteArray = ctx.finish()
 	return hashed.hex_encode()
-	
-func returnsha256str(data: String) -> String:
-	var bytes: PackedByteArray = data.to_utf8_buffer()
-	var ctx := HashingContext.new()
-	ctx.start(HashingContext.HASH_SHA256)
-	ctx.update(bytes)
-	var hashed: PackedByteArray = ctx.finish()
-	return hashed.hex_encode()
-
-func _write_u32(dst: PackedByteArray, v: int) -> void:
-	dst.append((v >> 24) & 0xFF)
-	dst.append((v >> 16) & 0xFF)
-	dst.append((v >> 8) & 0xFF)
-	dst.append(v & 0xFF)
-
-func _write_u24(dst: PackedByteArray, v: int) -> void:
-	dst.append((v >> 16) & 0xFF)
-	dst.append((v >> 8) & 0xFF)
-	dst.append(v & 0xFF)
-	
-func _write_u16(dst: PackedByteArray, v: int) -> void:
-	dst.append((v >> 8) & 0xFF)
-	dst.append(v & 0xFF)
-
-func _read_u32(src: PackedByteArray, i: int) -> int:
-	return (src[i] << 24) | (src[i + 1] << 16) | (src[i + 2] << 8) | src[i + 3]
-	
-func _read_u24(src: PackedByteArray, i: int) -> int:
-	return(src[i] << 16) | (src[i + 1] << 8) | src[i + 2]
-	
-func _read_u16(src: PackedByteArray, i: int) -> int:
-	return (src[i] << 8) | src[i + 1]
 
 var finalpath = ""
 var stageid = ""
@@ -102,7 +70,7 @@ func save():
 	out['lights_startpos'] = lightsstarttime*1000
 	out['lights_rgb'] = [lightsrgb.r8, lightsrgb.g8, lightsrgb.b8, lightsrgb.a8]
 	out['music_encodeddata'] = load_and_returnb64(musicpath)
-	out['music_path_sha256'] = returnsha256str(musicpath)
+	out['music_path_sha256'] = musicpath.sha256_text()
 	out['elements'] = []
 	for element in elements:
 		var id = element.elementid
@@ -120,7 +88,7 @@ func save():
 
 func savemusicpath(musicpath: String):
 	var out = loadedmusicpaths
-	out[returnsha256str(musicpath)] = musicpath
+	out[musicpath.sha256_text()] = musicpath
 	save_to_file(JSON.stringify(out), "user://savedmusicpaths.json")
 	loadedmusicpaths = out
 
@@ -509,7 +477,7 @@ func _on_editmusic_donebtn_pressed() -> void:
 		$AudioStreamPlayer2D.stream = load("res://audio/editorost.mp3")
 		$AudioStreamPlayer2D.play(prevmusictime)
 	focus = ""
-	if not returnsha256str(musicpath) in loadedmusicpaths:
+	if not musicpath.sha256_text() in loadedmusicpaths:
 		savemusicpath(musicpath)
 
 var prevmusictime = null

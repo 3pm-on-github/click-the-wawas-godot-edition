@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://d35l55tdxc08w"]
+[gd_scene load_steps=27 format=3 uid="uid://d35l55tdxc08w"]
 
 [ext_resource type="Script" uid="uid://da5ag1b1cg5x2" path="res://scripts/menu.gd" id="1_vjb58"]
 [ext_resource type="AudioStream" uid="uid://brle1wunjefkc" path="res://audio/menumusic.mp3" id="3_mhnvy"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://c0ovbqg0x3sxh" path="res://images/exitbtnhover.png" id="9_70i5f"]
 [ext_resource type="AudioStream" uid="uid://dym6wdf1fq22e" path="res://audio/hovering.wav" id="9_i6lef"]
 [ext_resource type="Texture2D" uid="uid://d1pndllsek5dr" path="res://images/multibtnhover.png" id="9_mxgkd"]
+[ext_resource type="Texture2D" uid="uid://crwd4ncjuddu" path="res://images/configbtnhover.png" id="14_g6gyw"]
 [ext_resource type="Script" uid="uid://chaw6ey0cxmjc" path="res://scripts/customstagebtn.gd" id="16_mxgkd"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4ytvr"]
@@ -46,6 +47,10 @@ font_size = 48
 
 [sub_resource type="LabelSettings" id="LabelSettings_rsfmq"]
 font_size = 48
+
+[sub_resource type="LabelSettings" id="LabelSettings_oi1it"]
+font_size = 64
+font_color = Color(0, 0, 0, 1)
 
 [node name="menu" type="Node2D"]
 script = ExtResource("1_vjb58")
@@ -136,6 +141,7 @@ offset_right = 229.0
 offset_bottom = 782.0
 scale = Vector2(2, 2)
 texture_normal = ExtResource("6_13sgg")
+texture_hover = ExtResource("14_g6gyw")
 
 [node name="exitbtn" type="TextureButton" parent="mainmenu"]
 offset_left = 47.0
@@ -201,6 +207,7 @@ scale = Vector2(2.5, 2.5)
 text = "go back"
 
 [node name="onlinestagesmenu" type="Node2D" parent="."]
+visible = false
 
 [node name="title" type="Label" parent="onlinestagesmenu"]
 offset_left = 1097.0
@@ -294,6 +301,87 @@ scale = Vector2(2.5, 2.5)
 text = "play"
 script = ExtResource("16_mxgkd")
 
+[node name="configmenu" type="Node2D" parent="."]
+
+[node name="title" type="Label" parent="configmenu"]
+offset_left = 1425.185
+offset_top = -7.0
+offset_right = 1894.185
+offset_bottom = 189.0
+text = "options"
+label_settings = SubResource("LabelSettings_7jp70")
+
+[node name="subtitle" type="Label" parent="configmenu/title"]
+layout_mode = 0
+offset_left = -238.03
+offset_top = 155.0
+offset_right = 512.97
+offset_bottom = 247.99997
+text = "for changing how wawas work"
+label_settings = SubResource("LabelSettings_mxgkd")
+
+[node name="goback" type="Button" parent="configmenu"]
+offset_left = 1561.0001
+offset_top = 994.0
+offset_right = 1701.0001
+offset_bottom = 1025.0
+scale = Vector2(2.5, 2.5)
+text = "save and go back"
+
+[node name="onlineapiurl" type="Label" parent="configmenu"]
+offset_left = 30.0
+offset_top = 30.0
+offset_right = 492.0
+offset_bottom = 118.0
+text = "Online API URL"
+label_settings = SubResource("LabelSettings_oi1it")
+
+[node name="LineEdit" type="LineEdit" parent="configmenu/onlineapiurl"]
+layout_mode = 0
+offset_left = -16.0
+offset_top = 91.0
+offset_right = 233.0
+offset_bottom = 125.0
+scale = Vector2(2, 2)
+text = "https://ctw.threepm.xyz/api/v1"
+placeholder_text = "Your Online API URL here"
+
+[node name="onlineusername" type="Label" parent="configmenu"]
+offset_left = 19.0
+offset_top = 743.0
+offset_right = 559.0
+offset_bottom = 831.0
+text = "Online Username"
+label_settings = SubResource("LabelSettings_oi1it")
+
+[node name="LineEdit" type="LineEdit" parent="configmenu/onlineusername"]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 91.0
+offset_right = 276.0
+offset_bottom = 125.0
+scale = Vector2(2, 2)
+text = "wawaclicker"
+placeholder_text = "Your Online Username here"
+
+[node name="onlinepassword" type="Label" parent="configmenu"]
+offset_left = 29.0
+offset_top = 903.0
+offset_right = 559.0
+offset_bottom = 991.0
+text = "Online Password"
+label_settings = SubResource("LabelSettings_oi1it")
+
+[node name="LineEdit" type="LineEdit" parent="configmenu/onlinepassword"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 90.0
+offset_right = 265.0
+offset_bottom = 124.0
+scale = Vector2(2, 2)
+placeholder_text = "Your Online Password here"
+secret = true
+
 [node name="blackbg" type="ColorRect" parent="."]
 visible = false
 offset_right = 1920.0
@@ -315,6 +403,8 @@ offset_bottom = 1017.0
 [connection signal="pressed" from="mainmenu/playbtn" to="." method="_on_playbtn_pressed"]
 [connection signal="mouse_entered" from="mainmenu/editorbtn" to="." method="_on_editorbtn_mouse_entered"]
 [connection signal="pressed" from="mainmenu/editorbtn" to="." method="_on_editorbtn_pressed"]
+[connection signal="mouse_entered" from="mainmenu/configbtn" to="." method="_on_configbtn_mouse_entered"]
+[connection signal="pressed" from="mainmenu/configbtn" to="." method="_on_configbtn_pressed"]
 [connection signal="mouse_entered" from="mainmenu/exitbtn" to="." method="_on_exitbtn_mouse_entered"]
 [connection signal="pressed" from="mainmenu/exitbtn" to="." method="_on_exitbtn_pressed"]
 [connection signal="pressed" from="solomenu/classicstagesbtn" to="." method="_on_classicstagesbtn_pressed"]
@@ -322,4 +412,5 @@ offset_bottom = 1017.0
 [connection signal="pressed" from="solomenu/customstagebtn" to="solomenu/customstagebtn" method="_on_pressed"]
 [connection signal="pressed" from="solomenu/goback" to="." method="_on_goback_solomenu_pressed"]
 [connection signal="pressed" from="onlinestagesmenu/goback" to="." method="_on_goback_onlinestagesmenu_pressed"]
+[connection signal="pressed" from="configmenu/goback" to="." method="_on_configmenu_goback_pressed"]
 [connection signal="pressed" from="wawahitbox" to="." method="_on_wawahitbox_pressed"]
