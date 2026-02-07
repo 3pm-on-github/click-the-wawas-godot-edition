@@ -23,6 +23,14 @@ func save_to_file(content, path):
 		data.append(ord(character))
 	file.store_buffer(data)
 	file.close()
+	
+func save_ints_to_file(content, path):
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	var data: PackedByteArray = PackedByteArray()
+	for character in content:
+		data.append(character)
+	file.store_buffer(data)
+	file.close()
 
 func load_from_file(path):
 	var content = FileAccess.get_file_as_bytes(path)
@@ -97,6 +105,20 @@ func savemusicpath(musicpath2: String):
 	out[musicpath.sha256_text()] = musicpath2
 	save_to_file(JSON.stringify(out), "user://savedmusicpaths.json")
 	loadedmusicpaths = out
+	
+func get_defaultmusic() -> void:
+	var url = "https://github.com/3pm-on-github/click-the-wawas-godot-edition/raw/refs/heads/master/audio/customstagemusic.mp3"
+	var httpreq = HTTPRequest.new()
+	add_child(httpreq)
+	var err = httpreq.request(url, PackedStringArray(), HTTPClient.Method.METHOD_GET)
+	if err != OK:
+		print("Request failed to start: ", err)
+	var result = await httpreq.request_completed
+	var response_code = result[1]
+	if response_code != 200:
+		print("HTTP Error (5839652): ", response_code) # i just put random numbers now because atp i cant keep up anymore
+	var body = result[3]
+	save_ints_to_file(body, "user://customstagemusic.mp3")
 
 func loadcontent():
 	var src: PackedByteArray = load_from_file(Global.customstagetotry)
@@ -122,7 +144,8 @@ var loadedmusicpaths = {}
 var wawacount = 0
 var mrfreshcount = 0
 func _ready() -> void:
-	copy_res_to_user("res://audio/customstagemusic.mp3", "user://customstagemusic.mp3")
+	if not FileAccess.file_exists("user://customstagemusic.mp3"):
+		get_defaultmusic()
 	dontrunthebpmpreview = true
 	if loadcontent():
 		loadedcontent = loadcontent()
@@ -134,6 +157,7 @@ func _ready() -> void:
 			musicpath = loadedmusicpaths[loadedcontent.music_path_sha256]
 		else:
 			print("Error: Music Path not found in Music Path List. :(")
+	musicpath = "user://customstagemusic.mp3"
 	lightsbpm = loadedcontent.lights_bpm
 	lightsstarttime = loadedcontent.lights_startpos/1000
 	lightsrgb = Color.from_rgba8(loadedcontent.lights_rgb[0], loadedcontent.lights_rgb[1], loadedcontent.lights_rgb[2], loadedcontent.lights_rgb[3])
@@ -440,6 +464,7 @@ func _on_settings_donebtn_pressed() -> void:
 var musicpath = "user://customstagemusic.mp3"
 func _on_edit_music_pressed() -> void:
 	$settingspopup.visible = false
+	print(musicpath)
 	$editmusicpopup/changebtn.text = musicpath.get_file()
 	$editmusicpopup.visible = true
 	prevmusictime = null
