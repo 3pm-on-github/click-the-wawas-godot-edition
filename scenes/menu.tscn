@@ -153,6 +153,7 @@ texture_normal = ExtResource("7_i6lef")
 texture_hover = ExtResource("9_70i5f")
 
 [node name="solomenu" type="Node2D" parent="."]
+visible = false
 
 [node name="title" type="Label" parent="solomenu"]
 offset_left = 1349.0
@@ -206,15 +207,14 @@ text = "listen"
 script = ExtResource("16_mxgkd")
 
 [node name="goback" type="Button" parent="solomenu"]
-offset_left = 1742.0
-offset_top = 994.00006
-offset_right = 1810.0
-offset_bottom = 1025.0
+offset_left = 1445.0
+offset_top = 979.0
+offset_right = 1513.0
+offset_bottom = 1010.0
 scale = Vector2(2.5, 2.5)
 text = "go back"
 
 [node name="onlinestagesmenu" type="Node2D" parent="."]
-visible = false
 
 [node name="title" type="Label" parent="onlinestagesmenu"]
 offset_left = 1097.0
@@ -249,10 +249,10 @@ text = "wawawawawawawawawawawawawawaw"
 label_settings = SubResource("LabelSettings_g6gyw")
 
 [node name="goback" type="Button" parent="onlinestagesmenu"]
-offset_left = 1742.0
-offset_top = 994.00006
-offset_right = 1810.0
-offset_bottom = 1025.0
+offset_left = 1445.0
+offset_top = 979.0
+offset_right = 1513.0
+offset_bottom = 1010.0005
 scale = Vector2(2.5, 2.5)
 text = "go back"
 
@@ -317,6 +317,39 @@ offset_bottom = 180.0
 scale = Vector2(2.5, 2.5)
 text = "download"
 script = ExtResource("16_mxgkd")
+
+[node name="InfoPanel" type="Panel" parent="onlinestagesmenu"]
+offset_left = 719.0
+offset_top = 648.0
+offset_right = 1299.0
+offset_bottom = 877.0
+
+[node name="Title" type="Label" parent="onlinestagesmenu/InfoPanel"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 7.0
+offset_right = 561.0
+offset_bottom = 95.0
+text = "custom stage title"
+label_settings = SubResource("LabelSettings_3dmrc")
+
+[node name="Author" type="Label" parent="onlinestagesmenu/InfoPanel"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 86.59
+offset_right = 561.0
+offset_bottom = 174.5899
+text = "by Author"
+label_settings = SubResource("LabelSettings_81l6r")
+
+[node name="Rating" type="Label" parent="onlinestagesmenu/InfoPanel"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 146.99998
+offset_right = 205.0
+offset_bottom = 215.00499
+text = "1.00★"
+label_settings = SubResource("LabelSettings_rsfmq")
 
 [node name="configmenu" type="Node2D" parent="."]
 visible = false
@@ -431,4 +464,6 @@ offset_bottom = 1017.0
 [connection signal="pressed" from="solomenu/goback" to="." method="_on_goback_solomenu_pressed"]
 [connection signal="pressed" from="onlinestagesmenu/goback" to="." method="_on_goback_onlinestagesmenu_pressed"]
 [connection signal="pressed" from="configmenu/goback" to="." method="_on_configmenu_goback_pressed"]
+[connection signal="mouse_entered" from="wawahitbox" to="." method="_on_wawahitbox_mouse_entered"]
+[connection signal="mouse_exited" from="wawahitbox" to="." method="_on_wawahitbox_mouse_exited"]
 [connection signal="pressed" from="wawahitbox" to="." method="_on_wawahitbox_pressed"]

@@ -7,7 +7,32 @@ func load_from_file(path):
 func loadcontent() -> Dictionary:
 	var src: PackedByteArray = load_from_file(Global.customstagetotry)
 	return JSON.parse_string(src.get_string_from_utf8())
-	
+
+func createelements():
+	for element in loadedcontent.elements:
+		if element.id == 0:
+			var copy = $wawa.duplicate()
+			copy.position.x = element.x
+			copy.position.y = element.y
+			copy.visible = true
+			if element.flags == 1: # moving wawas
+				copy.set_script(load("res://scripts/wawa5.gd"))
+			elif element.flags == 2: # bouncing wawas
+				copy.set_script(load("res://scripts/wawa6.gd"))
+				if loadedcontent.lights_bpm != 0.0:
+					copy.bpm = loadedcontent.lights_bpm
+			copy.wawa_clicked.connect(_on_element_clicked)
+			elements.append(copy)
+			$wawa.get_parent().add_child(copy)
+		elif element.id == 1:
+			var copy = $mrfresh.duplicate()
+			copy.position.x = element.x
+			copy.position.y = element.y
+			copy.visible = true
+			copy.mrfresh_clicked.connect(_on_element_clicked)
+			elements.append(copy)
+			$mrfresh.get_parent().add_child(copy)
+
 var bpm = 130.0
 var startpos = 0.055
 var loadedcontent = loadcontent()
@@ -21,6 +46,11 @@ func _ready() -> void:
 	$wawa.visible = false
 	$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_buffer(Marshalls.base64_to_raw(loadedcontent.music_encodeddata))
 	$AudioStreamPlayer2D.play(startpos)
+	DiscordRPC.state = "custom stage ("+loadedcontent.popup_text+")"
+	DiscordRPC.refresh()
+	createelements()
+	for element in elements:
+		element.visible = false
 	$AudioStreamPlayer2D2.play()
 	if loadedcontent.lights_bpm != 0:
 		var lightstexture = GradientTexture1D.new()
@@ -88,35 +118,12 @@ var elements = []
 var playing = true
 var counter = 30
 func _on_ok_pressed() -> void:
-	DiscordRPC.state = "custom stage ("+loadedcontent.popup_text+")"
-	DiscordRPC.refresh()
+	for element in elements:
+		element.visible = true
 	counter = int(loadedcontent.counter)+1
 	$popup.visible = false
 	$counter.visible = true
 	$lights.visible = true
-	for element in loadedcontent.elements:
-		if element.id == 0:
-			var copy = $wawa.duplicate()
-			copy.position.x = element.x
-			copy.position.y = element.y
-			copy.visible = true
-			if element.flags == 1: # moving wawas
-				copy.set_script(load("res://scripts/wawa5.gd"))
-			elif element.flags == 2: # bouncing wawas
-				copy.set_script(load("res://scripts/wawa6.gd"))
-				if loadedcontent.lights_bpm != 0.0:
-					copy.bpm = loadedcontent.lights_bpm
-			copy.wawa_clicked.connect(_on_element_clicked)
-			elements.append(copy)
-			$wawa.get_parent().add_child(copy)
-		elif element.id == 1:
-			var copy = $mrfresh.duplicate()
-			copy.position.x = element.x
-			copy.position.y = element.y
-			copy.visible = true
-			copy.mrfresh_clicked.connect(_on_element_clicked)
-			elements.append(copy)
-			$mrfresh.get_parent().add_child(copy)
 	for i in range(counter):
 		$AudioStreamPlayer2D2.stream = load("res://audio/tick.wav")
 		$AudioStreamPlayer2D2.play()

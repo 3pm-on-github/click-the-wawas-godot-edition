@@ -185,6 +185,14 @@ func _ready() -> void:
 			copy.position.x = element.x
 			copy.position.y = element.y
 			copy.visible = true
+			if element.flags == 1: # moving wawas
+				copy.flags = 1
+				copy.get_node("Flag").visible = true
+				copy.get_node("Flag").text = "M"
+			elif element.flags == 2: # bouncing wawas
+				copy.flags = 2
+				copy.get_node("Flag").visible = true
+				copy.get_node("Flag").text = "B"
 			wawacount += 1
 			copy.remove_me.connect(_on_wawa_remove_me)
 			copy.modulate.a = 0
