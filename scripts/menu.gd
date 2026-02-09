@@ -103,9 +103,10 @@ func _ready() -> void:
 	$configmenu.visible = false
 	$configmenu.modulate.a = 0.0
 	loadedconfig = loadconfig()
-	$configmenu/onlineapiurl/LineEdit.text = loadedconfig.api_url
-	$configmenu/onlineusername/LineEdit.text = loadedconfig.username
-	$configmenu/onlinepassword/LineEdit.text = loadedconfig.password
+	if loadedconfig:
+		$configmenu/onlineapiurl/LineEdit.text = loadedconfig.api_url
+		$configmenu/onlineusername/LineEdit.text = loadedconfig.username
+		$configmenu/onlinepassword/LineEdit.text = loadedconfig.password
 	titlemove()
 	
 	var lastpos = $solomenu/onlinecustomstagesbtn.position.y
@@ -439,7 +440,10 @@ func _on_request_completed(_result, response_code, _headers, body):
 		var stageinfo = await get_onlinestage_info(file)
 		copy.get_node("Title").text = popup_text
 		copy.get_node("Author").text = "by "+stageinfo.author
-		copy.get_node("Rating").text = str(stageinfo.ranking)+"★"
+		if "ranking" in stageinfo:
+			copy.get_node("Rating").text = str(stageinfo.ranking)+"★"
+		else:
+			copy.get_node("Rating").text = "1.00★"
 		copy.position.y = lastpos + 255
 		copy.visible = true
 		if len(popup_text)>20:copy.get_node("Title").label_settings.font_size=64-1.6*(len(popup_text)-20)
@@ -485,7 +489,10 @@ func onlinecustomstageplaybtn_pressed(element) -> void:
 	$AudioStreamPlayer2D.play(loadedcontent.lights_startpos/1000)
 	$onlinestagesmenu/InfoPanel/Title.text = loadedcontent.popup_text
 	$onlinestagesmenu/InfoPanel/Author.text = "by "+stageinfo.author
-	$onlinestagesmenu/InfoPanel/Rating.text = str(stageinfo.ranking)+"★"
+	if "ranking" in stageinfo:
+		$onlinestagesmenu/InfoPanel/Rating.text = str(stageinfo.ranking)+"★"
+	else:
+		$onlinestagesmenu/InfoPanel/Rating.text = "1.00★"
 	bpm = loadedcontent.lights_bpm
 	stopthewawabeat=false
 	wawabeat()
@@ -599,7 +606,7 @@ func _on_goback_solomenu_pressed() -> void:
 	#	$mainmenu.modulate.a += 0.025
 	#	await get_tree().create_timer(0.005).timeout
 
-func saveconfig(api_url, username, password):
+func saveconfig(api_url, username, password, skipintro):
 	var out := {}
 	out['version'] = 1
 	out['api_url'] = api_url
@@ -608,6 +615,7 @@ func saveconfig(api_url, username, password):
 		out['password'] = password.sha256_text()
 	else:
 		out['password'] = loadedconfig.password
+	out['skipintro'] = skipintro
 	var file = FileAccess.open("user://config.json", FileAccess.WRITE)
 	var data: PackedByteArray = PackedByteArray()
 	for character in JSON.stringify(out):
@@ -622,7 +630,8 @@ func _on_configmenu_goback_pressed() -> void:
 	saveconfig(
 		$configmenu/onlineapiurl/LineEdit.text,
 		$configmenu/onlineusername/LineEdit.text,
-		$configmenu/onlinepassword/LineEdit.text
+		$configmenu/onlinepassword/LineEdit.text,
+		skipintrotoggle
 	)
 	for i in range(40):
 		$configmenu.modulate.a -= 0.025
@@ -641,3 +650,7 @@ func _on_wawahitbox_mouse_entered() -> void:
 
 func _on_wawahitbox_mouse_exited() -> void:
 	owsound = false
+
+var skipintrotoggle = false
+func _on_skipintro_check_button_pressed() -> void:
+	skipintrotoggle = not skipintrotoggle

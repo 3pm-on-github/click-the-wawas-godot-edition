@@ -10,4 +10,3 @@ script = ExtResource("1_yjqpq")
 offset_right = 1920.0
 offset_bottom = 1080.0
 stream = ExtResource("2_4bx60")
-autoplay = true
