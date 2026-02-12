@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://d35l55tdxc08w"]
+[gd_scene load_steps=28 format=3 uid="uid://d35l55tdxc08w"]
 
 [ext_resource type="Script" uid="uid://da5ag1b1cg5x2" path="res://scripts/menu.gd" id="1_vjb58"]
 [ext_resource type="AudioStream" uid="uid://brle1wunjefkc" path="res://audio/menumusic.mp3" id="3_mhnvy"]
@@ -27,6 +27,10 @@ outline_color = Color(0, 0, 0, 1)
 font_size = 68
 outline_size = 16
 outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_fy8yy"]
+font_size = 128
+font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_7jp70"]
 font_size = 128
@@ -68,10 +72,14 @@ volume_db = 6.0
 
 [node name="mainmenu" type="Node2D" parent="."]
 
-[node name="Wawa" type="Sprite2D" parent="mainmenu"]
-position = Vector2(1513, 525)
+[node name="Wawa" type="TextureRect" parent="mainmenu"]
+offset_left = 1159.0
+offset_top = 49.00003
+offset_right = 1302.0
+offset_bottom = 241.00003
 scale = Vector2(5, 5)
 texture = ExtResource("4_mhnvy")
+expand_mode = 1
 
 [node name="title" type="Label" parent="mainmenu"]
 offset_left = 64.0
@@ -151,6 +159,22 @@ scale = Vector2(2, 2)
 texture_normal = ExtResource("7_i6lef")
 texture_hover = ExtResource("9_70i5f")
 
+[node name="changelogbtn" type="Button" parent="mainmenu"]
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 95.0
+offset_bottom = 36.0
+text = "Changelog"
+
+[node name="Changelog" type="Label" parent="mainmenu"]
+visible = false
+offset_left = 656.0
+offset_top = 392.0
+offset_right = 1074.0
+offset_bottom = 567.0
+text = "W.I.P :)"
+label_settings = SubResource("LabelSettings_fy8yy")
+
 [node name="solomenu" type="Node2D" parent="."]
 visible = false
 
@@ -206,10 +230,10 @@ text = "listen"
 script = ExtResource("16_mxgkd")
 
 [node name="goback" type="Button" parent="solomenu"]
-offset_left = 1445.0
-offset_top = 979.0
-offset_right = 1513.0
-offset_bottom = 1010.0
+offset_left = 1396.0
+offset_top = 963.0
+offset_right = 1464.0
+offset_bottom = 994.0
 scale = Vector2(2.5, 2.5)
 text = "go back"
 
@@ -249,10 +273,10 @@ text = "wawawawawawawawawawawawawawaw"
 label_settings = SubResource("LabelSettings_g6gyw")
 
 [node name="goback" type="Button" parent="onlinestagesmenu"]
-offset_left = 1445.0
-offset_top = 979.0
-offset_right = 1513.0
-offset_bottom = 1010.0005
+offset_left = 1396.0
+offset_top = 963.0
+offset_right = 1464.0
+offset_bottom = 994.0005
 scale = Vector2(2.5, 2.5)
 text = "go back"
 
@@ -475,6 +499,7 @@ offset_bottom = 1017.0
 [connection signal="pressed" from="mainmenu/configbtn" to="." method="_on_configbtn_pressed"]
 [connection signal="mouse_entered" from="mainmenu/exitbtn" to="." method="_on_exitbtn_mouse_entered"]
 [connection signal="pressed" from="mainmenu/exitbtn" to="." method="_on_exitbtn_pressed"]
+[connection signal="pressed" from="mainmenu/changelogbtn" to="." method="_on_changelogbtn_pressed"]
 [connection signal="pressed" from="solomenu/classicstagesbtn" to="." method="_on_classicstagesbtn_pressed"]
 [connection signal="pressed" from="solomenu/onlinecustomstagesbtn" to="." method="_on_onlinecustomstagesbtn_pressed"]
 [connection signal="pressed" from="solomenu/customstagebtn" to="solomenu/customstagebtn" method="_on_pressed"]
