@@ -115,6 +115,7 @@ func _ready() -> void:
 		$mainmenu/configbtn.modulate.a += 0.04
 		$mainmenu/exitbtn.modulate.a += 0.04
 		$mainmenu/Wawa.modulate.a += 0.04
+		$mainmenu/title.modulate.a += 0.04
 		await get_tree().create_timer(0.005).timeout
 	$AudioStreamPlayer2D.stream = load("res://audio/menu-loop-"+str(randi_range(1, 2))+".wav")
 	wawabeat()
