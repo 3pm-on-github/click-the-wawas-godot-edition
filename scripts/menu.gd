@@ -28,7 +28,7 @@ func loadconfig():
 	if src.get_string_from_utf8() == "": return
 	return JSON.parse_string(src.get_string_from_utf8())
 
-var bpm = 140
+var bpm = 170
 var stopthewawabeat = false
 var owsound = false
 func wawabeat():
@@ -43,20 +43,6 @@ func wawabeat():
 			$AudioStreamPlayer2D2.play()
 		await get_tree().create_timer(60.0/bpm).timeout
 
-func titlemove():
-	var titletween = get_tree().create_tween()
-	titletween.tween_property($mainmenu/title, "position:y", $mainmenu/title.position.y + 20, 1.5)\
-		.set_trans(Tween.TRANS_SINE)
-	await get_tree().create_timer(1.5).timeout
-	while true:
-		if movement:
-			titletween = get_tree().create_tween()
-			titletween.tween_property($mainmenu/title, "position:y", $mainmenu/title.position.y - 40, 3.0).set_trans(Tween.TRANS_SINE)
-			await get_tree().create_timer(3.0).timeout
-			titletween = get_tree().create_tween()
-			titletween.tween_property($mainmenu/title, "position:y", $mainmenu/title.position.y + 40, 3.0).set_trans(Tween.TRANS_SINE)
-			await get_tree().create_timer(3.0).timeout
-
 var movement = true
 var elementfilepaths = {}
 var onlineelementfilepaths = {}
@@ -68,8 +54,7 @@ func _ready() -> void:
 	$blackbg.modulate.a = 0.0
 	$mainmenu.visible = true
 	$mainmenu/Wawa.pivot_offset = $mainmenu/Wawa.size * 0.5
-	$mainmenu/Wawa.position = Vector2(2413, 525)
-	$mainmenu/title.position = Vector2(-940.0, 64.0)
+	$mainmenu/Wawa.modulate.a = 0.0
 	$mainmenu/playbtn.position = Vector2(-403, 443)
 	$mainmenu/solobtn.visible = false
 	$mainmenu/multibtn.visible = false
@@ -77,12 +62,17 @@ func _ready() -> void:
 	$mainmenu/editorbtn.position = Vector2(-403, 582)
 	$mainmenu/Changelog.visible = false
 	$mainmenu/Changelog.modulate.a = 0.0
-	$onlinestagesmenu/InfoPanel.modulate.a = 0.0
-	$onlinestagesmenu/InfoPanel.visible = false
+	$configmenu/Credits.visible = false
+	$configmenu/Credits.modulate.a = 0.0
 	$mainmenu/configbtn.position = Vector2(-403, 724)
 	$mainmenu/exitbtn.position = Vector2(-403, 867)
 	$onlinestagesmenu/title.position = Vector2(1097.0, 11.0)
 	$onlinestagesmenu/goback.position = Vector2(1396.0, 963.0)
+	$mainmenu/title.modulate.a = 0.0
+	$mainmenu/playbtn.modulate.a = 0.0
+	$mainmenu/editorbtn.modulate.a = 0.0
+	$mainmenu/configbtn.modulate.a = 0.0
+	$mainmenu/exitbtn.modulate.a = 0.0
 	$wawahitbox.visible = true
 	$solomenu.visible = false
 	$onlinestagesmenu/ScrollContainer.position = Vector2(0, 0)
@@ -96,7 +86,6 @@ func _ready() -> void:
 		$configmenu/onlineapiurl/LineEdit.text = loadedconfig.api_url
 		$configmenu/onlineusername/LineEdit.text = loadedconfig.username
 		$configmenu/onlinepassword/LineEdit.text = loadedconfig.password
-	titlemove()
 	
 	var lastpos = $solomenu/onlinecustomstagesbtn.position.y
 	# get custom stages
@@ -121,53 +110,54 @@ func _ready() -> void:
 	
 	for i in range(25):
 		$bg.modulate.a += 0.04
+		$mainmenu/playbtn.modulate.a += 0.04
+		$mainmenu/editorbtn.modulate.a += 0.04
+		$mainmenu/configbtn.modulate.a += 0.04
+		$mainmenu/exitbtn.modulate.a += 0.04
+		$mainmenu/Wawa.modulate.a += 0.04
 		await get_tree().create_timer(0.005).timeout
-	$AudioStreamPlayer2D.play(0.117)
+	$AudioStreamPlayer2D.stream = load("res://audio/menu-loop-"+str(randi_range(1, 2))+".wav")
 	wawabeat()
-	var tween = get_tree().create_tween()
-	var wawatween = get_tree().create_tween()
-	$mainmenu/Wawa.rotation_degrees = -45
-	tween.tween_property($mainmenu/Wawa, "position", Vector2(1313, 425), 1.0).set_trans(Tween.TRANS_SINE)
-	wawatween.tween_property($mainmenu/Wawa, "rotation_degrees", 0.0, 1.0).set_trans(Tween.TRANS_SINE)
-	tween.tween_property($mainmenu/title, "position", Vector2(64, 64), 1.0).set_trans(Tween.TRANS_SINE)
-	tween.tween_property($mainmenu/playbtn, "position", Vector2(47, 443), 0.5).set_trans(Tween.TRANS_SINE)
-	await get_tree().create_timer(2.25).timeout
-	var tween2 = get_tree().create_tween()
-	tween2.tween_property($mainmenu/editorbtn, "position", Vector2(47, 582), 0.5).set_trans(Tween.TRANS_SINE)
-	await get_tree().create_timer(0.25).timeout
-	var tween3 = get_tree().create_tween()
-	tween3.tween_property($mainmenu/configbtn, "position", Vector2(47, 724), 0.5).set_trans(Tween.TRANS_SINE)
-	await get_tree().create_timer(0.25).timeout
-	var tween4 = get_tree().create_tween()
-	tween4.tween_property($mainmenu/exitbtn, "position", Vector2(47, 867), 0.5).set_trans(Tween.TRANS_SINE)
-	$mainmenu/solobtn.visible = true
+	await get_tree().create_timer(0.02).timeout
+	$AudioStreamPlayer2D.play()
 
 func _process(_delta: float) -> void:
 	$onlinestagesmenu/title/wawabanner/Label.position.x -= 1.0
 	if $onlinestagesmenu/title/wawabanner/Label.position.x == -89.0:
 		$onlinestagesmenu/title/wawabanner/Label.position.x = 0.0
+	var mouse_pos = get_global_mouse_position()
+	$mainmenu/playbtn.position = Vector2((mouse_pos.x/50)+47, (mouse_pos.y/50)+443)
+	$mainmenu/solobtn.position = Vector2((mouse_pos.x/50)+431, (mouse_pos.y/50)+443)
+	$mainmenu/multibtn.position = Vector2((mouse_pos.x/50)+431, (mouse_pos.y/50)+582)
+	$mainmenu/editorbtn.position = Vector2((mouse_pos.x/50)+47, (mouse_pos.y/50)+582)
+	$mainmenu/configbtn.position = Vector2((mouse_pos.x/50)+47, (mouse_pos.y/50)+724)
+	$mainmenu/exitbtn.position = Vector2((mouse_pos.x/50)+47, (mouse_pos.y/50)+867)
+	$mainmenu/Wawa.position = Vector2(1313-((1920-mouse_pos.x)/50), (mouse_pos.y/50)+425)
+	$mainmenu/title.position = Vector2((mouse_pos.x/50)+64, (mouse_pos.y/50)+64)
 
 var playtoggled = false
 func _on_playbtn_pressed() -> void:
 	playtoggled = not playtoggled
 	if playtoggled:
+		$mainmenu/solobtn.modulate.a = 0.0
+		$mainmenu/multibtn.modulate.a = 0.0
+		$mainmenu/solobtn.visible = true
+		$mainmenu/multibtn.visible = true
 		$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
 		$AudioStreamPlayer2D2.play()
-		var tween = get_tree().create_tween()
-		tween.tween_property($mainmenu/solobtn, "position", Vector2(431.0, 443.0), 0.25).set_trans(Tween.TRANS_SINE)
-		await get_tree().create_timer(0.25).timeout
-		$mainmenu/multibtn.visible = true
-		var tween2 = get_tree().create_tween()
-		tween2.tween_property($mainmenu/multibtn, "position", Vector2(431.0, 582.0), 0.25).set_trans(Tween.TRANS_SINE)
+		for i in range(25):
+			$mainmenu/solobtn.modulate.a += 0.04
+			$mainmenu/multibtn.modulate.a += 0.04
+			await get_tree().create_timer(0.005).timeout
 	else:
 		$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
 		$AudioStreamPlayer2D2.play()
-		var tween = get_tree().create_tween()
-		tween.tween_property($mainmenu/multibtn, "position", Vector2(431.0, 443.0), 0.25).set_trans(Tween.TRANS_SINE)
-		await get_tree().create_timer(0.25).timeout
+		for i in range(25):
+			$mainmenu/solobtn.modulate.a -= 0.04
+			$mainmenu/multibtn.modulate.a -= 0.04
+			await get_tree().create_timer(0.005).timeout
+		$mainmenu/solobtn.visible = false
 		$mainmenu/multibtn.visible = false
-		var tween2 = get_tree().create_tween()
-		tween2.tween_property($mainmenu/solobtn, "position", Vector2(47, 443), 0.25).set_trans(Tween.TRANS_SINE)
 
 func _on_playbtn_mouse_entered() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/hovering.wav")
@@ -199,7 +189,6 @@ func _on_configbtn_pressed() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/click.wav")
 	$AudioStreamPlayer2D2.play()
 	$wawahitbox.visible = false
-	$mainmenu/solobtn.visible = false
 	for i in range(40):
 		$mainmenu.modulate.a -= 0.025
 		await get_tree().create_timer(0.005).timeout
@@ -263,43 +252,16 @@ func _on_solobtn_pressed() -> void:
 	$AudioStreamPlayer2D2.play()
 	$wawahitbox.visible = false
 	dothewawabossfight = false
-	#for i in range(40):
-	#	$mainmenu.modulate.a -= 0.025
-	#	await get_tree().create_timer(0.005).timeout
 	
-	# main menu animation
-	var tween = get_tree().create_tween()
-	var tween1 = get_tree().create_tween()
-	var tween2 = get_tree().create_tween()
-	var tween3 = get_tree().create_tween()
-	var tween4 = get_tree().create_tween()
-	var wawatween = get_tree().create_tween()
-	var wawatween2 = get_tree().create_tween()
-	var wawatween3 = get_tree().create_tween()
-	wawatween.tween_property($mainmenu/Wawa, "position", Vector2(1677, 788), 1.0).set_trans(Tween.TRANS_SINE)
-	wawatween2.tween_property($mainmenu/Wawa, "size", Vector2(57.2, 76.8), 1.0).set_trans(Tween.TRANS_SINE)
-	wawatween3.tween_property($mainmenu/Wawa, "pivot_offset", Vector2(57.2, 76.8)*0.5, 1.0).set_trans(Tween.TRANS_SINE)
-	tween.tween_property($mainmenu/title, "position", Vector2(-940.0, 64.0), 1.0).set_trans(Tween.TRANS_SINE)
-	tween1.tween_property($mainmenu/playbtn, "position", Vector2(-403, 443), 0.5).set_trans(Tween.TRANS_SINE)
-	tween2.tween_property($mainmenu/editorbtn, "position", Vector2(-403, 582), 0.5).set_trans(Tween.TRANS_SINE)
-	tween3.tween_property($mainmenu/configbtn, "position", Vector2(-403, 724), 0.5).set_trans(Tween.TRANS_SINE)
-	tween4.tween_property($mainmenu/exitbtn, "position", Vector2(-403, 867), 0.5).set_trans(Tween.TRANS_SINE)
-	
-	#$mainmenu.visible = false
-	#await get_tree().create_timer(0.25).timeout
 	$solomenu.visible = true
-	for i in range(40):
-		$mainmenu/changelogbtn.modulate.a -= 0.025
-		$mainmenu/solobtn.modulate.a -= 0.025
-		$mainmenu/multibtn.modulate.a -= 0.025
-		$solomenu.modulate.a += 0.025
+	for i in range(20):
+		$mainmenu.modulate.a -= 0.05
+		$solomenu.modulate.a += 0.05
 		await get_tree().create_timer(0.005).timeout
-	$mainmenu/changelogbtn.visible = false
-	$mainmenu/solobtn.visible = false
-	$mainmenu/multibtn.visible = false
+	$mainmenu.visible = false
 	$wawahitbox.position = Vector2(1605.0, 676.0)
 	$wawahitbox.size = Vector2(312, 403)
-	$wawahitbox.visible = true
+	$wawahitbox.visible = false
 
 func _on_solobtn_mouse_entered() -> void:
 	$AudioStreamPlayer2D2.stream = load("res://audio/hovering.wav")
@@ -473,39 +435,9 @@ func onlinecustomstageplaybtn_pressed(element) -> void:
 	$onlinestagesmenu/title.text = "downloading"
 	$AudioStreamPlayer2D2.stream = load("res://audio/editortry.ogg")
 	$AudioStreamPlayer2D2.play()
-	stopthewawabeat=true
-	var filepath = await get_onlinestage(onlineelementfilepaths[element])
-	var loadedcontent = loadcontent(filepath)
-	var stageinfo = await get_onlinestage_info(filepath.trim_prefix("user://customstages/"))
-	$AudioStreamPlayer2D.stop()
-	$AudioStreamPlayer2D.stream = AudioStreamMP3.load_from_buffer(Marshalls.base64_to_raw(loadedcontent.music_encodeddata))
-	$AudioStreamPlayer2D.play(loadedcontent.lights_startpos/1000)
-	$onlinestagesmenu/InfoPanel/Title.text = loadedcontent.popup_text
-	$onlinestagesmenu/InfoPanel/Author.text = "by "+stageinfo.author
-	if "ranking" in stageinfo:
-		$onlinestagesmenu/InfoPanel/Rating.text = str(stageinfo.ranking)+"★"
-	else:
-		$onlinestagesmenu/InfoPanel/Rating.text = "1.00★"
-	bpm = loadedcontent.lights_bpm
-	stopthewawabeat=false
-	wawabeat()
-	
-	# loading animation
+	await get_onlinestage(onlineelementfilepaths[element])
 	$AudioStreamPlayer2D2.stream = load("res://audio/editortry.ogg")
 	$AudioStreamPlayer2D2.play()
-	$onlinestagesmenu/InfoPanel.visible = true
-	var tween1 = get_tree().create_tween()
-	var tween2 = get_tree().create_tween()
-	var tween3 = get_tree().create_tween()
-	var tween4 = get_tree().create_tween()
-	var tween5 = get_tree().create_tween()
-	tween1.tween_property($onlinestagesmenu/ScrollContainer, "position", Vector2(-820, 0), 1.0).set_trans(Tween.TRANS_SINE)
-	tween2.tween_property($onlinestagesmenu/title, "position", Vector2(1920, 11), 1.0).set_trans(Tween.TRANS_SINE)
-	tween3.tween_property($onlinestagesmenu/goback, "position", Vector2(1445, 1080), 1.0).set_trans(Tween.TRANS_SINE)
-	tween4.tween_property($mainmenu/Wawa, "position", Vector2(1018, 338), 1.0).set_trans(Tween.TRANS_SINE)
-	tween5.tween_property($onlinestagesmenu/InfoPanel, "modulate:a", 1.0, 1.0).set_trans(Tween.TRANS_SINE)
-	$wawahitbox.visible = false
-	await get_tree().create_timer(5.0).timeout
 	AudioServer.set_bus_effect_enabled(AudioServer.get_bus_index("Master"), 2, true)
 	$blackbg.visible = true
 	var tween = get_tree().create_tween()
@@ -547,14 +479,12 @@ func _on_goback_onlinestagesmenu_pressed() -> void:
 	$AudioStreamPlayer2D2.play()
 	for i in range(40):
 		$onlinestagesmenu.modulate.a -= 0.025
-		$mainmenu/Wawa.modulate.a -= 0.025
 		await get_tree().create_timer(0.005).timeout
 	$onlinestagesmenu.visible = false
 	await get_tree().create_timer(0.25).timeout
 	$solomenu.visible = true
 	for i in range(40):
 		$solomenu.modulate.a += 0.025
-		$mainmenu/Wawa.modulate.a += 0.025
 		await get_tree().create_timer(0.005).timeout
 
 func _on_goback_solomenu_pressed() -> void:
@@ -563,43 +493,15 @@ func _on_goback_solomenu_pressed() -> void:
 	$wawahitbox.visible = false
 	dothewawabossfight = true
 	
-	# main menu animation
-	
-	var tween = get_tree().create_tween()
-	var tween1 = get_tree().create_tween()
-	var tween2 = get_tree().create_tween()
-	var tween3 = get_tree().create_tween()
-	var tween4 = get_tree().create_tween()
-	var wawatween = get_tree().create_tween()
-	var wawatween2 = get_tree().create_tween()
-	var wawatween3 = get_tree().create_tween()
-	wawatween.tween_property($mainmenu/Wawa, "position", Vector2(1313, 425), 1.0).set_trans(Tween.TRANS_SINE)
-	wawatween2.tween_property($mainmenu/Wawa, "size", Vector2(143.0, 192.0), 1.0).set_trans(Tween.TRANS_SINE)
-	wawatween3.tween_property($mainmenu/Wawa, "pivot_offset", Vector2(143.0, 192.0)*0.5, 1.0).set_trans(Tween.TRANS_SINE)
-	tween.tween_property($mainmenu/title, "position", Vector2(64.0, 64.0), 1.0).set_trans(Tween.TRANS_SINE)
-	tween1.tween_property($mainmenu/playbtn, "position", Vector2(47.0, 443), 0.5).set_trans(Tween.TRANS_SINE)
-	tween2.tween_property($mainmenu/editorbtn, "position", Vector2(47.0, 582), 0.5).set_trans(Tween.TRANS_SINE)
-	tween3.tween_property($mainmenu/configbtn, "position", Vector2(47.0, 724), 0.5).set_trans(Tween.TRANS_SINE)
-	tween4.tween_property($mainmenu/exitbtn, "position", Vector2(47.0, 867), 0.5).set_trans(Tween.TRANS_SINE)
-	
-	$mainmenu/solobtn.visible = true
-	$mainmenu/changelogbtn.visible = true
-	$mainmenu/multibtn.visible = true
-	for i in range(40):
-		$solomenu.modulate.a -= 0.025
-		$mainmenu/changelogbtn.modulate.a += 0.025
-		$mainmenu/solobtn.modulate.a += 0.025
-		$mainmenu/multibtn.modulate.a += 0.025
+	$mainmenu.visible = true
+	for i in range(20):
+		$solomenu.modulate.a -= 0.05
+		$mainmenu.modulate.a += 0.05
 		await get_tree().create_timer(0.005).timeout
 	$solomenu.visible = false
 	$wawahitbox.position = Vector2(998.0, 43.0)
 	$wawahitbox.size = Vector2(898, 974)
 	$wawahitbox.visible = true
-	
-	#$mainmenu.visible = true
-	#for i in range(40):
-	#	$mainmenu.modulate.a += 0.025
-	#	await get_tree().create_timer(0.005).timeout
 
 func saveconfig(api_url, username, password, skipintro):
 	var out := {}
@@ -638,7 +540,6 @@ func _on_configmenu_goback_pressed() -> void:
 	for i in range(40):
 		$mainmenu.modulate.a += 0.025
 		await get_tree().create_timer(0.005).timeout
-	$mainmenu/solobtn.visible = true
 
 func _on_wawahitbox_mouse_entered() -> void:
 	owsound = true
@@ -663,3 +564,20 @@ func _on_changelogbtn_pressed() -> void:
 			$mainmenu/Changelog.modulate.a -= 0.025
 			await get_tree().create_timer(0.005).timeout
 		$mainmenu/Changelog.visible = false
+
+func _on_audio_finished():
+	$AudioStreamPlayer2D.play()
+
+var creditstoggle = false
+func _on_credits_button_pressed() -> void:
+	creditstoggle = not creditstoggle
+	if creditstoggle:
+		$configmenu/Credits.visible = true
+		for i in range(40):
+			$configmenu/Credits.modulate.a += 0.025
+			await get_tree().create_timer(0.005).timeout
+	else:
+		for i in range(40):
+			$configmenu/Credits.modulate.a -= 0.025
+			await get_tree().create_timer(0.005).timeout
+		$configmenu/Credits.visible = false
